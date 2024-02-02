@@ -19,12 +19,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{3DC23221-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{22143BA5-80EE-4952-8C77-D025AAE6BD4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solucao.Service.API.Seguranca", "src\1 - Service\Solucao.Service.API.Seguranca\Solucao.Service.API.Seguranca.csproj", "{382B50F6-7DD7-4B4D-A660-822A7D1EF546}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solucao.Service.API.Cadastro", "src\1 - Service\Solucao.Service.API.Cadastro\Solucao.Service.API.Cadastro.csproj", "{2DA86A02-02DA-450F-A2EE-55EED98F8610}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,5 +49,7 @@ Global
 		{998B58D5-CD0A-497E-9F82-7D8EC048DC4B} = {9625D936-2687-469A-9B37-B2F4A8C6FA68}
 		{3DC23221-FAE6-420C-9632-99F7C7095B38} = {9625D936-2687-469A-9B37-B2F4A8C6FA68}
 		{22143BA5-80EE-4952-8C77-D025AAE6BD4E} = {9625D936-2687-469A-9B37-B2F4A8C6FA68}
+		{382B50F6-7DD7-4B4D-A660-822A7D1EF546} = {E8F2335F-CADC-4A2D-BF2F-80AD7729171C}
+		{2DA86A02-02DA-450F-A2EE-55EED98F8610} = {E8F2335F-CADC-4A2D-BF2F-80AD7729171C}
 	EndGlobalSection
 EndGlobal
