@@ -3,12 +3,39 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3FF97026-A314-49BB-A871-CED4B3BD083A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Service", "1 - Service", "{E8F2335F-CADC-4A2D-BF2F-80AD7729171C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Application", "2 - Application", "{3E3926AC-BCEA-43A0-B881-3FECC763BDE7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Domain", "3 - Domain", "{D6F61753-A3EA-4F8D-863A-39A4B57251A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infrastructure", "4 - Infrastructure", "{9625D936-2687-469A-9B37-B2F4A8C6FA68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{998B58D5-CD0A-497E-9F82-7D8EC048DC4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{3DC23221-FAE6-420C-9632-99F7C7095B38}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{22143BA5-80EE-4952-8C77-D025AAE6BD4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E8F2335F-CADC-4A2D-BF2F-80AD7729171C} = {3FF97026-A314-49BB-A871-CED4B3BD083A}
+		{3E3926AC-BCEA-43A0-B881-3FECC763BDE7} = {3FF97026-A314-49BB-A871-CED4B3BD083A}
+		{D6F61753-A3EA-4F8D-863A-39A4B57251A1} = {3FF97026-A314-49BB-A871-CED4B3BD083A}
+		{9625D936-2687-469A-9B37-B2F4A8C6FA68} = {3FF97026-A314-49BB-A871-CED4B3BD083A}
+		{998B58D5-CD0A-497E-9F82-7D8EC048DC4B} = {9625D936-2687-469A-9B37-B2F4A8C6FA68}
+		{3DC23221-FAE6-420C-9632-99F7C7095B38} = {9625D936-2687-469A-9B37-B2F4A8C6FA68}
+		{22143BA5-80EE-4952-8C77-D025AAE6BD4E} = {9625D936-2687-469A-9B37-B2F4A8C6FA68}
 	EndGlobalSection
 EndGlobal
