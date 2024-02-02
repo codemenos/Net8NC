@@ -1,0 +1,6 @@
+@Solucao.Service.API.Seguranca_HostAddress = http://localhost:5258
+
+GET {{Solucao.Service.API.Seguranca_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

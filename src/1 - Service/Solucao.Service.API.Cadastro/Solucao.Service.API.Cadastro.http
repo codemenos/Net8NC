@@ -1,0 +1,6 @@
+@Solucao.Service.API.Cadastro_HostAddress = http://localhost:5236
+
+GET {{Solucao.Service.API.Cadastro_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
