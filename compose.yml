@@ -1,0 +1,60 @@
+version: "3.9"
+services:
+
+  codemenos-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: codemenos-sqlserver
+    env_file:
+      - .env
+    ports:
+      - "1433:1433" # Padrão do SQL Server
+    volumes:
+      - mssqldata:/var/opt/mssql
+      - mssqllogs:/var/opt/mssql/logs
+    restart: always
+    labels:
+      type: "codemenos"
+    networks:
+      - codemenos-network
+
+  codemenos-rabbitmq:
+    image: rabbitmq:3.12.12-management-alpine
+    container_name: codemenos-rabbitmq
+    env_file:
+      - .env
+    ports:
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    networks:
+      - codemenos-network
+
+  codemenos-redis:
+    image: "redis/redis-stack:latest"
+    container_name: codemenos-redis
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"  # Redis Commander
+    volumes:
+      - redis_data:/data
+    networks:
+      - codemenos-network
+
+networks:
+  codemenos-network:
+    driver: bridge
+
+volumes:
+  mssqldata:
+  mssqllogs:
+  rabbitmq_data:
+  redis_data:
