@@ -3,7 +3,18 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Solucao.Application.Core\Solucao.Application.Core.csproj" />
+    <ProjectReference Include="..\..\Domain\Solucao.Domain.Core\Solucao.Domain.Core.csproj" />
+    <ProjectReference Include="..\..\Domain\Solucao.Domain.Seguranca\Solucao.Domain.Seguranca.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Data\Solucao.Infrastructure.Data.Core\Solucao.Infrastructure.Data.Core.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Data\Solucao.Infrastructure.Data.Seguranca\Solucao.Infrastructure.Data.Seguranca.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Integration\Solucao.Infrastructure.Integration\Solucao.Infrastructure.Integration.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Shared\Solucao.Infrastructure.Shared\Solucao.Infrastructure.Shared.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -3,7 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
+
+ <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\Shared\Solucao.Infrastructure.Shared\Solucao.Infrastructure.Shared.csproj" />
+  </ItemGroup>
 
 </Project>
