@@ -1,14 +1,14 @@
-﻿namespace Solucao.Service.API.Seguranca.Registers;
+﻿namespace Solucao.Service.API.Cadastro.Registers;
 
 using System.Reflection;
 using MassTransit;
 using RabbitMQ.Client;
 using Solucao.Application.Core;
-using Solucao.Service.API.Seguranca.Configurations;
+using Solucao.Service.API.Cadastro.Configurations;
 
 public static class MassTransitRegister
 {
-    private const string LOCALAPIPRINCIPAL = "_SegurancaApi";
+    private const string LOCALAPIPRINCIPAL = "_CadastroApi";
     private const string CONFIGURATIONCONSUMERS = "RabbitMqConfiguration:Consumers";
 
     public static IServiceCollection AddMassTransit(this IServiceCollection services, IConfiguration configuration)
@@ -45,7 +45,7 @@ public static class MassTransitRegister
 
                 foreach (var consumerConfig in consumerConfigs)
                 {
-                    var assembly = Assembly.Load("Solucao.Application.Seguranca");
+                    var assembly = Assembly.Load("Solucao.Application.Cadastro");
                     var consumerType = assembly.GetTypes().FirstOrDefault(t => t.Name == consumerConfig.ConsumerName);
                     if (consumerType is not null)
                     {

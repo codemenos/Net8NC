@@ -1,44 +1,36 @@
-var builder = WebApplication.CreateBuilder(args);
+namespace Solucao.Service.API.Cadastro;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+using System.Globalization;
+using Solucao.Service.API.Cadastro.Registers;
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/// <summary>
+/// Classe principal do projeto.
+/// </summary>
+public partial class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    /// <summary>
+    /// Método principal do projeto.
+    /// </summary>
+    /// <param name="args"></param>
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.UseHttpsRedirection();
+        CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        var defaultConnection = builder.Configuration.GetConnectionString(ConstantGlobal.StringConnectionDefault);
+        var nomesDosBancosDados = new List<string> { "HangFireDB", "HealthCheckerDB", "CadastroDB" };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+        CriadorBancoDados.CriarBancosDadosSeNaoExistirem(defaultConnection, nomesDosBancosDados);
 
-app.Run();
+        builder.Logging.RegisterLogging();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        builder.Services.RegisterServices(builder.Configuration);
+
+        var app = builder.Build();
+
+        app.RegisterWebApp();
+
+        app.Run();
+    }
 }

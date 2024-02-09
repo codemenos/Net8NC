@@ -1,4 +1,4 @@
-﻿namespace Solucao.Service.API.Seguranca.Registers;
+﻿namespace Solucao.Service.API.Cadastro.Registers;
 
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
