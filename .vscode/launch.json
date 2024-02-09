@@ -1,0 +1,59 @@
+{
+    "version": "0.2.0",
+    "tasks": {
+        "build_APISeguranca": {
+            "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/src/Service/API/Solucao.Service.API.Seguranca/Solucao.Service.API.Seguranca.csproj"],
+            "label": "build APISeguranca",
+            "group": "build"
+        },
+        "build_APICadastro": {
+           "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/src/Service/API/Solucao.Service.API.Cadastro/Solucao.Service.API.Cadastro.csproj"],
+            "label": "build APICadastro",
+            "group": "build"
+        }
+    },
+    "configurations": [
+        {
+            "name": "APISeguranca",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_APISeguranca",
+            "program": "${workspaceFolder}/src/Service/API/Solucao.Service.API.Seguranca/bin/Debug/net8.0/Solucao.Service.API.Seguranca.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Service/API/Solucao.Service.API.Seguranca",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "APICadastro",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_APICadastro",
+            "program": "${workspaceFolder}/src/Service/API/Solucao.Service.API.Cadastro/bin/Debug/net8.0/Solucao.Service.API.Cadastro.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Service/API/Solucao.Service.API.Cadastro",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Multiple Startup",
+            "configurations": ["APISeguranca", "APICadastro"]
+        }
+    ]
+}

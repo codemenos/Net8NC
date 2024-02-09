@@ -1,10 +1,10 @@
-﻿namespace Solucao.Service.API.Seguranca.Registers;
+﻿namespace Solucao.Service.API.Cadastro.Registers;
 
 using AutoMapper;
 using Hangfire;
 using MediatR;
 using Solucao.Application.Core.Behaviors;
-using Solucao.Service.API.Seguranca.Configurations;
+using Solucao.Service.API.Cadastro.Configurations;
 
 public static class ApplicationRegisterServices
 {

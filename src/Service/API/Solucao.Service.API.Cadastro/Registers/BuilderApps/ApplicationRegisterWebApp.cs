@@ -1,11 +1,14 @@
-﻿namespace Solucao.Service.API.Seguranca.Registers;
+﻿namespace Solucao.Service.API.Cadastro.Registers;
 
 using Hangfire;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
-using Solucao.Infrastructure.Data.Seguranca.Contexts;
 using Microsoft.Extensions.DependencyInjection;
+using Solucao.Infrastructure.Data.Cadastro.Contexts;
+using Solucao.Service.API.Cadastro.Configurations;
+using Solucao.Service.API.Cadastro.Registers;
+
 
 public static class ApplicationRegisterWebApp
 {

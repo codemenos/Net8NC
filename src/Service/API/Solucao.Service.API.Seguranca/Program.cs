@@ -1,13 +1,29 @@
+namespace Solucao.Service.API.Seguranca;
+
+using System.Globalization;
 using Solucao.Service.API.Seguranca.Registers;
 
-var builder = WebApplication.CreateBuilder(args);
+public partial class Program
+{
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.RegisterLogging();
+        CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
 
-builder.Services.RegisterServices(builder.Configuration);
+        var defaultConnection = builder.Configuration.GetConnectionString(ConstantGlobal.StringConnectionDefault);
+        var nomesDosBancosDados = new List<string> { "HangFireDB", "HealthCheckerDB", "SegurancaDB" };
 
-var app = builder.Build();
+        CriadorBancoDados.CriarBancosDadosSeNaoExistirem(defaultConnection, nomesDosBancosDados);
 
-app.RegisterWebApp();
+        builder.Logging.RegisterLogging();
 
-app.Run();
+        builder.Services.RegisterServices(builder.Configuration);
+
+        var app = builder.Build();
+
+        app.RegisterWebApp();
+
+        app.Run();
+    }
+}

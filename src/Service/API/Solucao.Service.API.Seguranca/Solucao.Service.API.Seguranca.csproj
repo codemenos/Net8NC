@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
@@ -24,6 +24,7 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Data" Version="8.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.SqlServer.Storage" Version="8.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="8.0.0" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.9" />
@@ -45,6 +46,19 @@
     <ProjectReference Include="..\..\..\Application\Solucao.Application.Seguranca\Solucao.Application.Seguranca.csproj" />
     <ProjectReference Include="..\..\..\Application\Solucao.Application.Core\Solucao.Application.Core.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\Shared\Solucao.Infrastructure.Shared\Solucao.Infrastructure.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/SwaggerDark.css" />
+    <EmbeddedResource Include="Assets/SwaggerSelectThemes.js" />
+    <EmbeddedResource Include="Assets/SwaggerClassic.css" />
+    <EmbeddedResource Include="Assets/SwaggerAzul.css" />
+    <EmbeddedResource Include="Assets/SwaggerFlat.css" />
+    <EmbeddedResource Include="Assets/SwaggerMonokai.css" />
+    <EmbeddedResource Include="Assets/SwaggerOutline.css" />
+    <EmbeddedResource Include="Assets/HealthChecks_Dark.css" />
+    <EmbeddedResource Include="Assets/HealthChecks_Logo.jpg" />
+    <EmbeddedResource Include="Assets/1ae4e3706fe3f478fcc1.woff2" />
   </ItemGroup>
 
 </Project>

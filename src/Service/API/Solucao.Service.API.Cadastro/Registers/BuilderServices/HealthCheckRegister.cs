@@ -1,7 +1,7 @@
-﻿namespace Solucao.Service.API.Seguranca.Registers;
+﻿namespace Solucao.Service.API.Cadastro.Registers;
 
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Solucao.Service.API.Seguranca.Configurations;
+using Solucao.Service.API.Cadastro.Configurations;
 
 public static class HealthCheckRegister
 {
