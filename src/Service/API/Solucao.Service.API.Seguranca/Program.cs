@@ -1,7 +1,8 @@
 namespace Solucao.Service.API.Seguranca;
 
 using System.Globalization;
-using Solucao.Service.API.Seguranca.Registers;
+using Solucao.Infrastructure.Shared.Common;
+using Solucao.Service.API.Core.Registers;
 
 public partial class Program
 {
@@ -9,16 +10,16 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        CultureInfo.CurrentCulture = new CultureInfo("pt-BR");
+        CultureInfo.CurrentCulture = new CultureInfo(ConstantGlobal.CULTURE);
 
         var defaultConnection = builder.Configuration.GetConnectionString(ConstantGlobal.StringConnectionDefault);
-        var nomesDosBancosDados = new List<string> { "HangFireDB", "HealthCheckerDB", "SegurancaDB" };
+        var nomesDosBancosDados = new List<string> { ConstantGlobal.HANGFIRE_DB, ConstantGlobal.HEALTH_CHECKER_DB, ConstantGlobal.SEGURANCA_DB };
 
         CriadorBancoDados.CriarBancosDadosSeNaoExistirem(defaultConnection, nomesDosBancosDados);
 
         builder.Logging.RegisterLogging();
 
-        builder.Services.RegisterServices(builder.Configuration);
+        builder.Services.RegisterServices(typeof(Program), builder.Configuration);
 
         var app = builder.Build();
 
