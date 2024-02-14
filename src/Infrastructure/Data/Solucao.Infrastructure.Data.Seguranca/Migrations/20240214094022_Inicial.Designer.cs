@@ -12,7 +12,7 @@ using Solucao.Infrastructure.Data.Seguranca.Contexts;
 namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 {
     [DbContext(typeof(SegurancaContext))]
-    [Migration("20240210145426_Inicial")]
+    [Migration("20240214094022_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Aggregates.Role", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Aggregates.SecurityRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,10 +50,10 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("SecurityRole", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Aggregates.User", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Aggregates.SecurityUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,10 +116,10 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("SecurityUser", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.RoleClaim", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,10 +140,10 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("SecurityRoleClaim", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserClaim", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,10 +164,10 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("SecurityUserClaim", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserLogin", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -185,10 +185,10 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("SecurityUserLogin", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserRole", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -200,10 +200,10 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("SecurityUserRole", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserToken", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserToken", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -219,54 +219,54 @@ namespace Solucao.Infrastructure.Data.Seguranca.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("SecurityUserToken", (string)null);
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.RoleClaim", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityRoleClaim", b =>
                 {
-                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.Role", null)
+                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.SecurityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserClaim", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserClaim", b =>
                 {
-                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.User", null)
+                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.SecurityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserLogin", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserLogin", b =>
                 {
-                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.User", null)
+                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.SecurityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserRole", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserRole", b =>
                 {
-                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.Role", null)
+                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.SecurityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.User", null)
+                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.SecurityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.UserToken", b =>
+            modelBuilder.Entity("Solucao.Domain.Seguranca.Entities.SecurityUserToken", b =>
                 {
-                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.User", null)
+                    b.HasOne("Solucao.Domain.Seguranca.Aggregates.SecurityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

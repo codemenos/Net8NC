@@ -186,6 +186,9 @@ public partial class SwaggerConfiguration
                 .Select(attr => attr.GroupName)
                 .FirstOrDefault();
 
+            if (groupName is null && docName.ToLower().Equals("identidade"))
+                return true;
+
             return groupName == docName;
         });
 
@@ -227,7 +230,8 @@ public partial class SwaggerConfiguration
 
         foreach (var group in swaggerConfiguration?.Groups!)
         {
-            options.SwaggerEndpoint(string.Format(SWAGGER_JSON_PATH, group.Key), group.Key);
+            var path = string.Format(SWAGGER_JSON_PATH, group.Key);
+            options.SwaggerEndpoint(path.Replace("//", "/"), group.Key);
         }
 
         options.EnableTryItOutByDefault();
@@ -260,7 +264,7 @@ public partial class SwaggerConfiguration
             var groups = swaggerConfiguration.Groups.Select(group => new SwaggerGroup
             {
                 Name = group.Key,
-                Value = string.Format(SWAGGER_JSON_PATH, group.Key)
+                Value = string.Format(SWAGGER_JSON_PATH, group.Key).Replace("//", "/")
             }).ToList();
 
             var jsonConfig = new SwaggerJsonConfig

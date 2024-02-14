@@ -1,10 +1,7 @@
-﻿#nullable disable
-
-namespace Solucao.Infrastructure.Data.Seguranca.Migrations;
+﻿namespace Solucao.Infrastructure.Data.Seguranca.Migrations;
 
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-
 
 /// <inheritdoc />
 public partial class Inicial : Migration
@@ -13,7 +10,7 @@ public partial class Inicial : Migration
     protected override void Up(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.CreateTable(
-            name: "AspNetRoles",
+            name: "SecurityRole",
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -23,11 +20,11 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                table.PrimaryKey("PK_SecurityRole", x => x.Id);
             });
 
         migrationBuilder.CreateTable(
-            name: "AspNetUsers",
+            name: "SecurityUser",
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -48,11 +45,11 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                table.PrimaryKey("PK_SecurityUser", x => x.Id);
             });
 
         migrationBuilder.CreateTable(
-            name: "AspNetRoleClaims",
+            name: "SecurityRoleClaim",
             columns: table => new
             {
                 Id = table.Column<int>(type: "int", nullable: false)
@@ -63,17 +60,17 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                table.PrimaryKey("PK_SecurityRoleClaim", x => x.Id);
                 table.ForeignKey(
-                    name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                    name: "FK_SecurityRoleClaim_SecurityRole_RoleId",
                     column: x => x.RoleId,
-                    principalTable: "AspNetRoles",
+                    principalTable: "SecurityRole",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateTable(
-            name: "AspNetUserClaims",
+            name: "SecurityUserClaim",
             columns: table => new
             {
                 Id = table.Column<int>(type: "int", nullable: false)
@@ -84,17 +81,17 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                table.PrimaryKey("PK_SecurityUserClaim", x => x.Id);
                 table.ForeignKey(
-                    name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                    name: "FK_SecurityUserClaim_SecurityUser_UserId",
                     column: x => x.UserId,
-                    principalTable: "AspNetUsers",
+                    principalTable: "SecurityUser",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateTable(
-            name: "AspNetUserLogins",
+            name: "SecurityUserLogin",
             columns: table => new
             {
                 LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -104,17 +101,17 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                table.PrimaryKey("PK_SecurityUserLogin", x => new { x.LoginProvider, x.ProviderKey });
                 table.ForeignKey(
-                    name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                    name: "FK_SecurityUserLogin_SecurityUser_UserId",
                     column: x => x.UserId,
-                    principalTable: "AspNetUsers",
+                    principalTable: "SecurityUser",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateTable(
-            name: "AspNetUserRoles",
+            name: "SecurityUserRole",
             columns: table => new
             {
                 UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -122,23 +119,23 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                table.PrimaryKey("PK_SecurityUserRole", x => new { x.UserId, x.RoleId });
                 table.ForeignKey(
-                    name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                    name: "FK_SecurityUserRole_SecurityRole_RoleId",
                     column: x => x.RoleId,
-                    principalTable: "AspNetRoles",
+                    principalTable: "SecurityRole",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
                 table.ForeignKey(
-                    name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                    name: "FK_SecurityUserRole_SecurityUser_UserId",
                     column: x => x.UserId,
-                    principalTable: "AspNetUsers",
+                    principalTable: "SecurityUser",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateTable(
-            name: "AspNetUserTokens",
+            name: "SecurityUserToken",
             columns: table => new
             {
                 UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -148,77 +145,77 @@ public partial class Inicial : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                table.PrimaryKey("PK_SecurityUserToken", x => new { x.UserId, x.LoginProvider, x.Name });
                 table.ForeignKey(
-                    name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                    name: "FK_SecurityUserToken_SecurityUser_UserId",
                     column: x => x.UserId,
-                    principalTable: "AspNetUsers",
+                    principalTable: "SecurityUser",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateIndex(
-            name: "IX_AspNetRoleClaims_RoleId",
-            table: "AspNetRoleClaims",
-            column: "RoleId");
-
-        migrationBuilder.CreateIndex(
             name: "RoleNameIndex",
-            table: "AspNetRoles",
+            table: "SecurityRole",
             column: "NormalizedName",
             unique: true,
             filter: "[NormalizedName] IS NOT NULL");
 
         migrationBuilder.CreateIndex(
-            name: "IX_AspNetUserClaims_UserId",
-            table: "AspNetUserClaims",
-            column: "UserId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_AspNetUserLogins_UserId",
-            table: "AspNetUserLogins",
-            column: "UserId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_AspNetUserRoles_RoleId",
-            table: "AspNetUserRoles",
+            name: "IX_SecurityRoleClaim_RoleId",
+            table: "SecurityRoleClaim",
             column: "RoleId");
 
         migrationBuilder.CreateIndex(
             name: "EmailIndex",
-            table: "AspNetUsers",
+            table: "SecurityUser",
             column: "NormalizedEmail");
 
         migrationBuilder.CreateIndex(
             name: "UserNameIndex",
-            table: "AspNetUsers",
+            table: "SecurityUser",
             column: "NormalizedUserName",
             unique: true,
             filter: "[NormalizedUserName] IS NOT NULL");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_SecurityUserClaim_UserId",
+            table: "SecurityUserClaim",
+            column: "UserId");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_SecurityUserLogin_UserId",
+            table: "SecurityUserLogin",
+            column: "UserId");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_SecurityUserRole_RoleId",
+            table: "SecurityUserRole",
+            column: "RoleId");
     }
 
     /// <inheritdoc />
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "AspNetRoleClaims");
+            name: "SecurityRoleClaim");
 
         migrationBuilder.DropTable(
-            name: "AspNetUserClaims");
+            name: "SecurityUserClaim");
 
         migrationBuilder.DropTable(
-            name: "AspNetUserLogins");
+            name: "SecurityUserLogin");
 
         migrationBuilder.DropTable(
-            name: "AspNetUserRoles");
+            name: "SecurityUserRole");
 
         migrationBuilder.DropTable(
-            name: "AspNetUserTokens");
+            name: "SecurityUserToken");
 
         migrationBuilder.DropTable(
-            name: "AspNetRoles");
+            name: "SecurityRole");
 
         migrationBuilder.DropTable(
-            name: "AspNetUsers");
+            name: "SecurityUser");
     }
 }

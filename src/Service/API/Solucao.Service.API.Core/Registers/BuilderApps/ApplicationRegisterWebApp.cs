@@ -1,7 +1,6 @@
 ﻿namespace Solucao.Service.API.Core.Registers;
 
 using System.Reflection;
-using System;
 using Hangfire;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;

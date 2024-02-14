@@ -1,5 +1,6 @@
 ﻿namespace Solucao.Service.API.Core.Registers;
 
+using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Solucao.Infrastructure.Data.Cadastro.Contexts;
 using Solucao.Infrastructure.Data.Seguranca.Contexts;
 using Solucao.Infrastructure.Shared.Common;
-using System.Data;
 
 /// <summary>
 /// Registra o SQL Server no container de injeção de dependência.
@@ -32,11 +32,26 @@ public static class SQLServerRegister
         {
             connectionString = configuration.GetConnectionString(ConstantGlobal.StringConnectionSeguranca);
 
-            services.AddDbContext<SegurancaContext>(options =>
+            if (!string.IsNullOrEmpty(connectionString))
             {
-                options.UseSqlServer(connectionString);
-                options.LogTo(Console.WriteLine, LogLevel.Error);
-            });
+                services.AddDbContext<SegurancaContext>(options =>
+                {
+                    options.UseSqlServer(connectionString);
+                    options.LogTo(Console.WriteLine, LogLevel.Error);
+                });
+
+                services.AddScoped<IDbConnection>(provider =>
+                {
+                    var configuration = provider.GetRequiredService<IConfiguration>();
+                    var connection = new SqlConnection(connectionString);
+
+                    return connection;
+                });
+
+                using var scope = services.BuildServiceProvider().CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<SegurancaContext>();
+                context.Database.Migrate();
+            }
         }
 
         if (type.AssemblyQualifiedName.Contains(CADASTRO))
