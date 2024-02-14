@@ -8,7 +8,7 @@ using Solucao.Infrastructure.Shared.Common;
 /// <summary>
 /// Controlador base para operações comuns que tratam respostas de sucesso e erro.
 /// </summary>
-public class CacauBaseController : ControllerBase
+public class BaseController : ControllerBase
 {
     private const string ResponseNotFound = "Recurso não encontrado.";
     private const string ResponseNotDefined = "Ocorreu um erro não tratado.";
@@ -19,7 +19,7 @@ public class CacauBaseController : ControllerBase
     private readonly IMediator _mediator;
     private readonly ILogger _logger;
 
-    public CacauBaseController(IMediator mediator, ILogger logger)
+    public BaseController(IMediator mediator, ILogger logger)
     {
         _mediator = mediator;
         _logger = logger;
