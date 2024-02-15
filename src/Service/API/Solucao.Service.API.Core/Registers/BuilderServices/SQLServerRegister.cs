@@ -37,6 +37,7 @@ public static class SQLServerRegister
                 services.AddDbContext<SegurancaContext>(options =>
                 {
                     options.UseSqlServer(connectionString);
+                    options.UseOpenIddict();
                     options.LogTo(Console.WriteLine, LogLevel.Error);
                 });
 

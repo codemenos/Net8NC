@@ -1,14 +1,11 @@
 namespace Solucao.Service.API.Seguranca;
 
 using System.Globalization;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Solucao.Infrastructure.Data.Seguranca.Contexts;
 using Solucao.Infrastructure.Shared.Common;
 using Solucao.Service.API.Core.Registers;
 using Microsoft.EntityFrameworkCore;
 using Solucao.Domain.Seguranca.Aggregates;
-using Solucao.Domain.Seguranca.Entities;
 
 public partial class Program
 {
@@ -35,7 +32,6 @@ public partial class Program
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("SegurancaConnection"));
         });
-
 
         var app = builder.Build();
 
