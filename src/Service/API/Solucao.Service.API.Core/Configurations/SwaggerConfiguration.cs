@@ -274,7 +274,8 @@ public partial class SwaggerConfiguration
             };
 
             return Results.Json(jsonConfig);
-        });
+        })
+        .AllowAnonymous();
 
         foreach (var delegateConfig in swaggerConfiguration.Delegates)
         {
@@ -305,6 +306,7 @@ public partial class SwaggerConfiguration
 
                 return Results.NotFound();
             })
+            .AllowAnonymous()
             .ExcludeFromDescription();
         }
     }

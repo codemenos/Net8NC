@@ -3,11 +3,14 @@
 using AutoMapper;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Solucao.Application.Core.Behaviors;
 using Solucao.Infrastructure.Shared.Common;
 using Solucao.Service.API.Core.Configurations;
+using Solucao.Service.API.Core.Services;
+
 
 /// <summary>
 /// Registros de serviços da aplicação
@@ -28,6 +31,22 @@ public static class ApplicationRegisterServices
         services.AddHttpContextAccessor();
 
         services.AddControllers();
+
+        if (type.AssemblyQualifiedName.Contains("Seguranca"))
+        {
+            services.AddOpenIdDict(type, configuration);
+            services.AddRazorPages();
+            services.AddTransient<AuthorizationService>();
+
+            services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(c =>
+            {
+                c.LoginPath = "/Authenticate";
+            });
+
+            services.AddTransient<ClientsSeeder>();
+        }
         
         services.AddEndpointsApiExplorer();
         

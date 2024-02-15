@@ -15,4 +15,10 @@ public static class ConstantGlobal
     public const string HEALTH_CHECKER_DB = "HealthCheckerDB";
     public const string SEGURANCA_DB = "SegurancaDB";
     public const string CADASTRO_DB = "CadastroDB";
+
+   public const string Email = "email";
+   public const string Password = "password";
+   public const string ConsentNaming = "consent";
+   public const string GrantAccessValue = "Grant";
+   public const string DenyAccessValue = "Deny";
 }

@@ -13,6 +13,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="OpenIddict" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" />
+    <PackageReference Include="OpenIddict.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>
