@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Solucao.Domain.Seguranca.Aggregates;
+using Solucao.Domain.Seguranca.Entities;
 using Solucao.Infrastructure.Data.Cadastro.Contexts;
 using Solucao.Infrastructure.Data.Seguranca.Contexts;
 using Solucao.Infrastructure.Shared.Common;
@@ -37,7 +39,7 @@ public static class SQLServerRegister
                 services.AddDbContext<SegurancaContext>(options =>
                 {
                     options.UseSqlServer(connectionString);
-                    options.UseOpenIddict();
+                    options.UseOpenIddict<SecurityApplication, SecurityAuthorization, SecurityScope, SecurityToken, Guid>();
                     options.LogTo(Console.WriteLine, LogLevel.Error);
                 });
 

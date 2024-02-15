@@ -2,8 +2,10 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 using Solucao.Domain.Seguranca.Aggregates;
 using Solucao.Domain.Seguranca.Entities;
+using Solucao.Infrastructure.Data.Seguranca.Configurations;
 
 public class SegurancaContext : IdentityDbContext<SecurityUser, SecurityRole, Guid, SecurityUserClaim, SecurityUserRole, SecurityUserLogin, SecurityRoleClaim, SecurityUserToken>
 {
@@ -14,6 +16,7 @@ public class SegurancaContext : IdentityDbContext<SecurityUser, SecurityRole, Gu
     private const string IDENTITY_USER_LOGIN = "SecurityUserLogin";
     private const string IDENTITY_ROLE_CLAIM = "SecurityRoleClaim";
     private const string IDENTITY_USER_TOKEN = "SecurityUserToken";
+
     public SegurancaContext(DbContextOptions<SegurancaContext> options) : base(options)
     {
         //Rodar da pasta raiz da solução
@@ -30,6 +33,11 @@ public class SegurancaContext : IdentityDbContext<SecurityUser, SecurityRole, Gu
     public override DbSet<SecurityUserLogin> UserLogins { get; set; }
     public override DbSet<SecurityRoleClaim> RoleClaims { get; set; }
     public override DbSet<SecurityUserToken> UserTokens { get; set; }
+    public DbSet<SecurityApplication> SecurityApplications { get; set; }
+    public DbSet<SecurityAuthorization> SecurityAuthorizations { get; set; }
+    public DbSet<SecurityScope> SecurityScopes { get; set; }
+    public DbSet<SecurityToken> SecurityTokens { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -42,6 +50,11 @@ public class SegurancaContext : IdentityDbContext<SecurityUser, SecurityRole, Gu
         builder.Entity<SecurityUserLogin>(b => { b.ToTable(IDENTITY_USER_LOGIN); b.HasKey(e => new { e.LoginProvider, e.ProviderKey }); });
         builder.Entity<SecurityRoleClaim>(b => { b.ToTable(IDENTITY_ROLE_CLAIM); });
         builder.Entity<SecurityUserToken>(b => { b.ToTable(IDENTITY_USER_TOKEN); });
+
+        builder.ApplyConfiguration(new SecurityApplicationConfiguration());
+        builder.ApplyConfiguration(new SecurityAuthorizationConfiguration());
+        builder.ApplyConfiguration(new SecurityScopeConfiguration());
+        builder.ApplyConfiguration(new SecurityTokenConfiguration());
     }
 
 }

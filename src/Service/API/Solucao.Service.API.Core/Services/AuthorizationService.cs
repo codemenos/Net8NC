@@ -8,7 +8,7 @@ using OpenIddict.Abstractions;
 
 public class AuthorizationService
 {
-    public IDictionary<string, StringValues> ParseOAuthParameters(HttpContext httpContext, List<string>? excluding = null)
+    public IDictionary<string, StringValues> ParseOAuthParameters(HttpContext httpContext, List<string> excluding = null)
     {
         excluding ??= [];
 

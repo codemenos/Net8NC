@@ -1,11 +1,12 @@
 namespace Solucao.Service.API.Seguranca;
 
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using Solucao.Infrastructure.Data.Seguranca.Contexts;
 using Solucao.Infrastructure.Shared.Common;
 using Solucao.Service.API.Core.Registers;
-using Microsoft.EntityFrameworkCore;
 using Solucao.Domain.Seguranca.Aggregates;
+using System.Security.Claims;
 
 public partial class Program
 {
@@ -35,7 +36,9 @@ public partial class Program
 
         var app = builder.Build();
 
-        app.MapGroup("/Identidade").WithGroupName("Identidade").MapIdentityApi<SecurityUser>().WithGroupName("Identidade");
+        app.MapGroup("/Identidade").WithGroupName("Identidade").MapIdentityApi<SecurityUser>().WithGroupName("Identidade").AllowAnonymous();
+        app.MapGet("/", () => "Olá Anonimo!").AllowAnonymous();
+        app.MapGet("/requires-auth", (ClaimsPrincipal user) => $"Olá, {user.Identity?.Name}!").RequireAuthorization();
 
         app.RegisterWebApp();
 
