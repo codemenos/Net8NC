@@ -10,6 +10,8 @@ using System.Security.Claims;
 
 public partial class Program
 {
+    private const string IDENTIDADE = "Identidade";
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -31,14 +33,15 @@ public partial class Program
         
         builder.Services.AddDbContext<SegurancaContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SegurancaConnection"));
+            options.UseSqlServer(builder.Configuration.GetConnectionString(ConstantGlobal.StringConnectionSeguranca));
         });
 
         var app = builder.Build();
 
-        app.MapGroup("/Identidade").WithGroupName("Identidade").MapIdentityApi<SecurityUser>().WithGroupName("Identidade").AllowAnonymous();
-        app.MapGet("/", () => "Ol· Anonimo!").AllowAnonymous();
-        app.MapGet("/requires-auth", (ClaimsPrincipal user) => $"Ol·, {user.Identity?.Name}!").RequireAuthorization();
+        app.MapGroup($"/{IDENTIDADE}").WithGroupName(IDENTIDADE).MapIdentityApi<SecurityUser>().WithGroupName(IDENTIDADE).AllowAnonymous();
+
+        app.MapGet("/", () => "Ol√° Anonimo!").AllowAnonymous();
+        app.MapGet("/requires-auth", (ClaimsPrincipal user) => $"Ol√°, {user.Identity?.Name}!").RequireAuthorization();
 
         app.RegisterWebApp();
 

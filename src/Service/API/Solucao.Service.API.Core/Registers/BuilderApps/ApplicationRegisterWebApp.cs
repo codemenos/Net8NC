@@ -1,6 +1,7 @@
 ﻿namespace Solucao.Service.API.Core.Registers;
 
 using System.Reflection;
+using System.Reflection.Metadata;
 using Hangfire;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -105,26 +106,29 @@ public static class ApplicationRegisterWebApp
     /// <param name="app"></param>
     public static void ConfigureEndpoints(this WebApplication app)
     {
-        // Obter o caminho para a DLL atual
+        const string ASSETS = "Assets";
+
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
-
-        // Obter o diretório onde a DLL está localizada
         var assemblyDirectory = Path.GetDirectoryName(assemblyPath);
-
-        // Construir o caminho para a pasta "Assets" dentro do diretório da DLL
-        var assetsDirectory = Path.Combine(assemblyDirectory, "Assets");
+        var assetsDirectory = Path.Combine(assemblyDirectory, ASSETS);
 
         app.UseEndpoints(endpoint =>
         {
-            _ = endpoint.MapHealthChecks("/hc", new HealthCheckOptions 
+            const string HC_PATH = "/hc";
+            const string HC_UI_PATH = "/hc-ui";
+            const string CSS_DEFAULT = "HealthChecks_Dark.css";
+
+            _ = endpoint.MapHealthChecks(HC_PATH, new HealthCheckOptions 
             {
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
             _ = endpoint.MapHealthChecksUI(setup =>
             {
-                setup.UIPath = "/hc-ui";
-                setup.AddCustomStylesheet($"{assetsDirectory}\\HealthChecks_Dark.css");
+                var cssFilePath = Path.Combine(assetsDirectory, CSS_DEFAULT);
+                
+                setup.UIPath = HC_UI_PATH;
+                setup.AddCustomStylesheet(cssFilePath);
             });
         });
     }

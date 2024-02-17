@@ -1,6 +1,68 @@
-@Solucao.Service.API.Seguranca_HostAddress = http://localhost:5258
+@HostAddress = https://localhost:7000
+@token = eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiYXQrand0IiwiY3R5IjoiSldUIn0.kxJFtEI4RThsSdwbx2J4BxsxCmwgViTs7t8C7RuaMTSqvft-OVkJT-JQCodHh_c6LXxXwWaWDj-YFs8xgyPeTmOOAuYBade8.B67nqV0NKj6hOOn0oYdauw.Jy-fpdyTBDYW3aPXoMBTw0sfldRrsMNvwQ_9noGLdQ2vKBv6QbvJ0zQDMXbb1kR3IDxMGaRkxW5K5hyPA4ZvVK5TRkUW1jQ49hjjalI4OpTL20o7zQSCgQDR7qeExJDykj7I44uLUNr7HeDhorfyOjaZ5ZmDLBKZxQydFR-_WNnIjNR8XC2Vwxiy4F1fEvqRuz4GPQoAfWBOcV_VhsM-WcAdK18ToTMfjStyWPKE1Ym7iLngyRBbVgnnY3Vlpu_OYSTd6ebCLC4aEc8BDxapYg8Nab1ruzDJdS32LRBuUi55PcbCsk1fE_1I10bFm5ifaX3DgE4G7vCDhbCjYADPb00CjJpGfz1wr1tnb3lwMpm0RnxinYEehjN_HHNJWCZD7wfhDhUDyeHvTKu19I8RZ27rTnhH5k2cD9a-5-nV42RSgODXYDh6LNgCgJ3trF6DblINuoEtPFpSgh1-zNIDyh4RhWfP3a8IevEOFCMKG3yDzJ2ZpJkyC7F_AqYgne02h9LmuekoYhXYFZKNgsmlsPN18KoWsoER26mwJG8XQ6If9VUAtj7wZegDIF34YozACSyM538fuIBP4kG0ziNHh8H_cOOHBd1SrXPO7Nd0HNZBkdWHk-7L8q2HDATROV5s1rFZPHTAkPyPfpl2pGB4PhT-w1ph60cfDbj2RQpFSsORy5t3YjPMFWpIMXnoAiogUl54BE_NvxrkxQ61TEiy4et7LAKivyFqlRFgMbogM9RK9WRXTlxUoPEFJh2OfZBjJu9HxcZoPsjh-pUSQP_skEsYGZJQMHz7gTyY_2w_hJN-mP2-M9nntzGOJaPNIn312ovrvQE-50BkPnLz4k2IZPmaJGgjekHcaIj0Pt0rZg-3af0lEJkA_4CGwswnd4C1448kPINp2ySvGg77zCj-0pf9aShMhR8hOZuy3UmFcxV_wx6TgPCjcW4uiKeglUHcDcV7ZdQwV6Yn7bny2Cf12fPkySAYmZv96XWh0acPW4tWR03j-rmlyRh74LQ_KsWGf5WctVaf0zB8aNlQ_wNlItyUU8dn1n71wShcWZcmiPNqsJope1vtkMLsti5CK5aeoWPlfhK-4K3n_7pi4oW8RBWCH5MnAuBwtR0gDCWxZ78E_pae0hFWeaCW9QnadRAtzG2CcvE9GHsGY3NbP7CtxzZU3wVZteCyDHvqzpb3B9FW6528HoWaZA082rIKi1nHThJvf1sXHBOiVh9qPOHZjpsUdrniHfsv9U42KenG_QZI2mOEAoRcoyAGjUC6kV2gIG_J_xE1Dezvbgqc0XNnZvLgkleNt7uDJJ_HJBbOaPHH_hvhCaukOjNFf9nH2fA5Xo45ANxm-NaU3ILMF2EnBPyteBue4NO8uoC0v7DrhMPod8afVKrVSFtFooxvnw_ozYToND5LkG6oXS9WFQBY8b4bGTIQhDVCiCq_kdadH7Q5zD3tQJj0FMIgp8_F2jkvftvTh0UIR9TBk65bTaIPENjeYN0CDmcQqUQsq7mBDai4f3p_C6DxnszBBbf1_iRcyw4PhaUYfHarnYe47hq8o3F4DU08Rbg9lP-00kunb6EohQES-FB1A6OOStPEWqfbIEiCmgCPzTyNsMfu4uogjsvbOlt1DzNAPStOxd2YVnnBWjnHobYwAoTWbaYrECxFWhtp253Hj6iKKTRhIaDEMQj325lw-78khpSDeb-Lz5s.3-k4v1_In6QSyxicbb_I98FQgbzGItK2OVNErTvsEBk
 
-GET {{Solucao.Service.API.Seguranca_HostAddress}}/weatherforecast/
-Accept: application/json
+
+
+GET {HostAddress}/requires-auth
+Authorization: Bearer {{token}}
 
 ###
+### GET Request to /connect/authorize
+###
+
+GET {{HostAddress}}/connect/authorize
+
+###
+### POST Request to /connect/authorize (with form data)
+###
+
+POST {{HostAddress}}/connect/authorize
+Content-Type: application/x-www-form-urlencoded
+
+client_id=my_client_id
+redirect_uri=http://localhost:7000/callback
+response_type=code
+scope=openid%20profile%20email
+state=my_state
+
+###
+### POST Request to /connect/authorize/accept (Accept consent)
+###
+
+POST {{HostAddress}}/connect/authorize/accept
+Content-Type: application/x-www-form-urlencoded
+Cookie: .AspNetCore.Identity.Application=CfDJ8FktgIXm1o4_HyL7FzRw...
+
+client_id=my_client_id
+redirect_uri=http://localhost:7000/callback
+response_type=code
+scope=openid%20profile%20email
+state=my_state
+
+###
+### POST Request to /connect/authorize/deny (Deny consent)
+###
+
+POST {{HostAddress}}/connect/authorize/deny
+Content-Type: application/x-www-form-urlencoded
+
+client_id=my_client_id
+redirect_uri=http://localhost:7000/callback
+response_type=code
+scope=openid%20profile%20email
+state=my_state
+
+###
+### GET Request to /connect/logout
+###
+
+GET {{HostAddress}}/connect/logout?id_token_hint=my_id_token&post_logout_redirect_uri=http://localhost:7000
+
+###
+### POST Request to /connect/logout (Logout)
+###
+
+POST {{HostAddress}}/connect/logout
+Content-Type: application/x-www-form-urlencoded
+
+logout=my_logout_token
