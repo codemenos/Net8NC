@@ -3,10 +3,10 @@
 	"tasks": [
 		{
 			"type": "dotnet",
-			"task": "build",
-			"group": "build",
+			"task": "watch Solucao.Service.API.Seguranca",
+			"file": "/home/fabio/dev/repos/codemenos/Net8NC/src/Service/API/Solucao.Service.API.Seguranca/Solucao.Service.API.Seguranca.csproj",
 			"problemMatcher": [],
-			"label": "dotnet: build"
+			"label": "dotnet: watch Solucao.Service.API.Seguranca"
 		}
 	]
 }
