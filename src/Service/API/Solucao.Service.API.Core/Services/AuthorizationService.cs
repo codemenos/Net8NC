@@ -8,17 +8,11 @@ using OpenIddict.Abstractions;
 
 public class AuthorizationService
 {
-    public IDictionary<string, StringValues> ParseOAuthParameters(HttpContext httpContext, List<string> excluding = null)
+    public Dictionary<string, StringValues> ParseOAuthParameters(HttpContext httpContext, List<string> excluding = null)
     {
         excluding ??= [];
 
-        var parameters = httpContext.Request.HasFormContentType
-            ? httpContext.Request.Form
-                .Where(v => !excluding.Contains(v.Key))
-                .ToDictionary(v => v.Key, v => v.Value)
-            : httpContext.Request.Query
-                .Where(v => !excluding.Contains(v.Key))
-                .ToDictionary(v => v.Key, v => v.Value);
+        var parameters = GetParameters(httpContext, excluding);
 
         return parameters;
     }
@@ -26,6 +20,7 @@ public class AuthorizationService
     public string BuildRedirectUrl(HttpRequest request, IDictionary<string, StringValues> oAuthParameters)
     {
         var url = request.PathBase + request.Path + QueryString.Create(oAuthParameters);
+
         return url;
     }
 
@@ -61,5 +56,38 @@ public class AuthorizationService
         }
 
         return destinations;
+    }
+
+
+    //Private
+
+    private static Dictionary<string, StringValues> GetParameters(HttpContext httpContext, List<string> excluding)
+    {
+        if (httpContext.Request.HasFormContentType)
+        {
+            return GetFormParameters(httpContext, excluding);
+        }
+        else
+        {
+            return GetQueryParameters(httpContext, excluding);
+        }
+    }
+
+    private static Dictionary<string, StringValues> GetFormParameters(HttpContext httpContext, List<string> excluding)
+    {
+        var result = httpContext.Request.Form
+            .Where(v => !excluding.Contains(v.Key))
+            .ToDictionary(v => v.Key, v => v.Value);
+
+        return result;
+    }
+
+    private static Dictionary<string, StringValues> GetQueryParameters(HttpContext httpContext, List<string> excluding)
+    {
+        var result = httpContext.Request.Query
+            .Where(v => !excluding.Contains(v.Key))
+            .ToDictionary(v => v.Key, v => v.Value);
+
+        return result; 
     }
 }

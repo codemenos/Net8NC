@@ -67,6 +67,9 @@ public static class ApplicationRegisterWebApp
         app.ConfigureEndpoints();
 
         app.UseHangfireDashboard();
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
     }
 
     /// <summary>
@@ -97,6 +100,7 @@ public static class ApplicationRegisterWebApp
     {
         if (app.Environment.IsDevelopment())
         {
+            app.UseDeveloperExceptionPage();
         }
     }
 

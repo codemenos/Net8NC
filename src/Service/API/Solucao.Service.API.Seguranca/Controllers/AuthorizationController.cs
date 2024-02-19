@@ -1,8 +1,11 @@
 ﻿namespace Solucao.Service.API.Seguranca.Controllers;
 
 using System.Security.Claims;
+using IdentityModel.Client;
+using System.Web;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +16,23 @@ using Solucao.Domain.Seguranca.Aggregates;
 using Solucao.Infrastructure.Shared.Common;
 using Solucao.Service.API.Core.Attributes;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using Solucao.Service.API.Core.Services;
+using Microsoft.IdentityModel.Tokens;
+using k8s.KubeConfigModels;
 
 [ApiExplorerSettings(GroupName = "Autorizacao")]
 public class AuthorizationController : Controller
 {
+    private const string ConsentNaming = "consent";
+    private const string GrantAccessValue = "Grant";
+    private const string DenyAccessValue = "Deny";
+
     private readonly IOpenIddictApplicationManager _applicationManager;
     private readonly IOpenIddictAuthorizationManager _authorizationManager;
     private readonly IOpenIddictScopeManager _scopeManager;
     private readonly SignInManager<SecurityUser> _signInManager;
     private readonly UserManager<SecurityUser> _userManager;
+    private readonly AuthorizationService _authorizationService;
 
     /// <summary>
     /// Construtor da classe AuthorizationController.
@@ -29,18 +40,21 @@ public class AuthorizationController : Controller
     /// <param name="applicationManager">O gerenciador de aplicações OpenIddict.</param>
     /// <param name="authorizationManager">O gerenciador de autorizações OpenIddict.</param>
     /// <param name="scopeManager">O gerenciador de escopos OpenIddict.</param>
+    /// <param name="authorizationService"></param>
     /// <param name="signInManager">O gerenciador de logins.</param>
     /// <param name="userManager">O gerenciador de usuários.</param>
     public AuthorizationController(
         IOpenIddictApplicationManager applicationManager,
         IOpenIddictAuthorizationManager authorizationManager,
         IOpenIddictScopeManager scopeManager,
+        AuthorizationService authorizationService,
         SignInManager<SecurityUser> signInManager,
         UserManager<SecurityUser> userManager)
     {
         _applicationManager = applicationManager;
         _authorizationManager = authorizationManager;
         _scopeManager = scopeManager;
+        _authorizationService = authorizationService;
         _signInManager = signInManager;
         _userManager = userManager;
     }
@@ -57,176 +71,83 @@ public class AuthorizationController : Controller
     public async Task<IActionResult> Authorize()
     {
         var request = HttpContext.GetOpenIddictServerRequest() ??
-            throw new InvalidOperationException("A solicitação OpenID Connect não pode ser recuperada.");
+                      throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
-        // Recupera o principal do usuário armazenado no cookie de autenticação.
-        // Se não puder ser extraído, redireciona o usuário para a página de login.
-        var result = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
-        if (result is null || !result.Succeeded)
+        var application = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
+                          throw new InvalidOperationException("Details concerning the calling client application cannot be found.");
+
+        if (await _applicationManager.GetConsentTypeAsync(application) != ConsentTypes.Explicit)
         {
-            // Se a aplicação cliente solicitou autenticação sem prompt,
-            // retorna um erro indicando que o usuário não está logado.
-            if (request.HasPrompt(Prompts.None))
-            {
-                return Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.LoginRequired,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "O usuário não está logado."
-                    }));
-            }
-
-            return Challenge(
-                authenticationSchemes: IdentityConstants.ApplicationScheme,
-                properties: new AuthenticationProperties
+            return Forbid(
+                authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                properties: new AuthenticationProperties(new Dictionary<string, string?>
                 {
-                    RedirectUri = Request.PathBase + Request.Path + QueryString.Create(
-                        Request.HasFormContentType ? Request.Form.ToList() : Request.Query.ToList())
-                });
+                    [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidClient,
+                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+                        "Only clients with explicit consent type are allowed."
+                }));
         }
 
-        // Se prompt=login foi especificado pela aplicação cliente,
-        // retorna imediatamente o agente do usuário para a página de login.
+        var parameters = _authorizationService.ParseOAuthParameters(HttpContext, new List<string> { OpenIddictConstants.Parameters.Prompt });
+
+        // Obter o usuário atualmente autenticado
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            // Se o usuário não estiver autenticado, desafie a autenticação
+            return Challenge(properties: new AuthenticationProperties
+            {
+                RedirectUri = _authorizationService.BuildRedirectUrl(HttpContext.Request, parameters)
+            }, new[] { CookieAuthenticationDefaults.AuthenticationScheme });
+        }
+
         if (request.HasPrompt(Prompts.Login))
         {
-            // Para evitar redirecionamentos infinitos entre login -> autorização,
-            // a flag prompt=login é removida da carga da solicitação de autorização antes de redirecionar o usuário.
-            var prompt = string.Join(" ", request.GetPrompts().Remove(Prompts.Login));
-
-            var parameters = Request.HasFormContentType ?
-                Request.Form.Where(parameter =>
-                {
-                    return parameter.Key != Parameters.Prompt;
-                }).ToList() :
-                Request.Query.Where(parameter =>
-                {
-                    return parameter.Key != Parameters.Prompt;
-                }).ToList();
-
-            parameters.Add(KeyValuePair.Create(Parameters.Prompt, new StringValues(prompt)));
-
-            return Challenge(
-                authenticationSchemes: IdentityConstants.ApplicationScheme,
-                properties: new AuthenticationProperties
-                {
-                    RedirectUri = Request.PathBase + Request.Path + QueryString.Create(parameters)
-                });
-        }
-
-        // Se um parâmetro max_age foi fornecido, garante que o cookie não seja muito antigo.
-        // Se for muito antigo, redireciona automaticamente o agente do usuário para a página de login.
-        if (request.MaxAge is not null && result.Properties?.IssuedUtc is not null &&
-            DateTimeOffset.UtcNow - result.Properties.IssuedUtc > TimeSpan.FromSeconds(request.MaxAge.Value))
-        {
-            if (request.HasPrompt(Prompts.None))
+            // Fazer logoff se o prompt for de login
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Challenge(properties: new AuthenticationProperties
             {
-                return Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.LoginRequired,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "O usuário não está logado."
-                    }));
-            }
-
-            return Challenge(
-                authenticationSchemes: IdentityConstants.ApplicationScheme,
-                properties: new AuthenticationProperties
-                {
-                    RedirectUri = Request.PathBase + Request.Path + QueryString.Create(
-                        Request.HasFormContentType ? Request.Form.ToList() : Request.Query.ToList())
-                });
+                RedirectUri = _authorizationService.BuildRedirectUrl(HttpContext.Request, parameters)
+            }, new[] { CookieAuthenticationDefaults.AuthenticationScheme });
         }
 
-        // Recupera o perfil do usuário logado.
-        var user = await _userManager.GetUserAsync(result.Principal) ??
-            throw new InvalidOperationException("Os detalhes do usuário não podem ser recuperados.");
+        var consentClaim = User.FindFirstValue(ConsentNaming);
 
-        // Recupera os detalhes da aplicação do banco de dados.
-        var application = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
-            throw new InvalidOperationException("Detalhes da aplicação cliente chamadora não podem ser encontrados.");
-
-        // Recupera as autorizações permanentes associadas ao usuário e à aplicação cliente chamadora.
-        var authorizations = await _authorizationManager.FindAsync(
-            subject: await _userManager.GetUserIdAsync(user),
-            client: await _applicationManager.GetIdAsync(application),
-            status: Statuses.Valid,
-            type: AuthorizationTypes.Permanent,
-            scopes: request.GetScopes()).ToListAsync();
-
-        switch (await _applicationManager.GetConsentTypeAsync(application))
+        // it might be extended in a way that consent claim will contain list of allowed client ids.
+        if (consentClaim != GrantAccessValue || request.HasPrompt(Prompts.Consent))
         {
-            // Se o consentimento for externo (por exemplo, quando as autorizações são concedidas por um sysadmin),
-            // retorna imediatamente um erro se nenhuma autorização for encontrada no banco de dados.
-            case ConsentTypes.External when !authorizations.Any():
-                return Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.ConsentRequired,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
-                            "O usuário logado não tem permissão para acessar esta aplicação cliente."
-                    }));
-
-            // Se o consentimento for implícito ou se uma autorização for encontrada,
-            // retorna uma resposta de autorização sem exibir o formulário de consentimento.
-            case ConsentTypes.Implicit:
-            case ConsentTypes.External when authorizations.Any():
-            case ConsentTypes.Explicit when authorizations.Any() && !request.HasPrompt(Prompts.Consent):
-                var principal = await _signInManager.CreateUserPrincipalAsync(user);
-
-                // Observação: neste exemplo, os escopos concedidos correspondem aos escopos solicitados
-                // mas você pode querer permitir que o usuário desmarque escopos específicos.
-                // Para isso, basta restringir a lista de escopos antes de chamar SetScopes.
-                principal.SetScopes(request.GetScopes());
-                principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
-
-                // Cria automaticamente uma autorização permanente para evitar exigir consentimento explícito
-                // para futuras solicitações de autorização ou token contendo os mesmos escopos.
-                var authorization = authorizations.LastOrDefault();
-                authorization ??= await _authorizationManager.CreateAsync(
-                      principal: principal,
-                      subject: await _userManager.GetUserIdAsync(user),
-                      client: await _applicationManager.GetIdAsync(application),
-                      type: AuthorizationTypes.Permanent,
-                      scopes: principal.GetScopes());
-
-                principal.SetAuthorizationId(await _authorizationManager.GetIdAsync(authorization));
-
-                foreach (var claim in principal.Claims)
-                {
-                    claim.SetDestinations(GetDestinations(claim, principal));
-                }
-
-                return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-
-            // Neste ponto, nenhuma autorização foi encontrada no banco de dados e um erro deve ser retornado
-            // se a aplicação cliente especificou prompt=none na solicitação de autorização.
-            case ConsentTypes.Explicit when request.HasPrompt(Prompts.None):
-            case ConsentTypes.Systematic when request.HasPrompt(Prompts.None):
-                return Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.ConsentRequired,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
-                            "O consentimento do usuário é necessário."
-                    }));
-
-            // Em todos os outros casos, renderiza o formulário de consentimento.
-            default:
-
-                // TODO: neste momento, o exemplo não possui nenhuma página de consentimento...
-                throw new NotImplementedException("Tela de consentimento ainda não implementada!");
-
-                // return View(new AuthorizeViewModel
-                // {
-                //   ApplicationName = await _applicationManager.GetLocalizedDisplayNameAsync(application),
-                //   Scope = request.Scope
-                // });
+            // Redirecionar para a página de consentimento
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var returnUrl = HttpUtility.UrlEncode(_authorizationService.BuildRedirectUrl(HttpContext.Request, parameters));
+            var consentRedirectUrl = $"/Consent?returnUrl={returnUrl}";
+            return Redirect(consentRedirectUrl);
         }
+
+        // Criar a identidade do usuário
+        var userId = await _userManager.GetUserIdAsync(user);
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId),
+            new Claim(Claims.Subject, userId),
+            new Claim(Claims.Email, user.Email),
+            new Claim(Claims.Name, user.UserName)
+        };
+
+        var identity = new ClaimsIdentity(claims, TokenValidationParameters.DefaultAuthenticationType, Claims.Email, Claims.Role);
+
+        // Adicionar os escopos e recursos à identidade
+        identity.SetScopes(request.GetScopes());
+        identity.SetResources(await _scopeManager.ListResourcesAsync(identity.GetScopes()).ToListAsync());
+        identity.SetDestinations(c => AuthorizationService.GetDestinations(identity, c));
+
+        // Entrar com o usuário
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity));
+
+        return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
+
 
     /// <summary>
     /// Endpoint utilizado para aceitar o consentimento.
@@ -348,6 +269,7 @@ public class AuthorizationController : Controller
     /// Endpoint utilizado para trocar tokens.
     /// </summary>
     /// <returns>Um IActionResult representando o resultado da troca de tokens.</returns>
+    [IgnoreAntiforgeryToken]
     [Produces("application/json")]
     [HttpPost("~/connect/token")]
     public async Task<IActionResult> Exchange()
@@ -369,7 +291,6 @@ public class AuthorizationController : Controller
                     }));
             }
 
-            // Valida os parâmetros de nome de usuário/senha e garante que a conta não esteja bloqueada.
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
             if (!result.Succeeded)
             {
@@ -383,12 +304,12 @@ public class AuthorizationController : Controller
             }
 
             var principal = await _signInManager.CreateUserPrincipalAsync(user);
-
-            // Observação: neste exemplo, os escopos concedidos correspondem aos escopos solicitados
-            // mas você pode querer permitir que o usuário desmarque escopos específicos.
-            // Para isso, basta restringir a lista de escopos antes de chamar SetScopes.
             principal.SetScopes(request.GetScopes());
             principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
+            principal.AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
+            principal.AddClaim(Claims.Subject, user.Id.ToString());
+            principal.AddClaim(Claims.Email, user.Email);
+            principal.AddClaim(Claims.Name, user.UserName);
 
             foreach (var claim in principal.Claims)
             {
@@ -401,13 +322,8 @@ public class AuthorizationController : Controller
 
         else if (request.IsAuthorizationCodeGrantType() || request.IsDeviceCodeGrantType() || request.IsRefreshTokenGrantType())
         {
-            // Recupera o principal de reivindicações armazenado no código de autorização/dispositivo/código de atualização.
             var principal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal;
 
-            // Recupera o perfil de usuário correspondente ao código de autorização/atualização.
-            // Observação: se você deseja invalidar automaticamente o código de autorização/atualização
-            // quando a senha/funções do usuário forem alteradas, use a seguinte linha em vez disso:
-            // var user = _signInManager.ValidateSecurityStampAsync(info.Principal);
             var user = await _userManager.GetUserAsync(principal);
             if (user is null)
             {
@@ -420,7 +336,6 @@ public class AuthorizationController : Controller
                     }));
             }
 
-            // Garante que o usuário esteja autorizado a trocar tokens.
             if (!await _signInManager.CanSignInAsync(user))
             {
                 return Forbid(
@@ -432,7 +347,6 @@ public class AuthorizationController : Controller
                     }));
             }
 
-            // Garante que o usuário ainda esteja permitido a trocar tokens.
             if (!await _signInManager.CanSignInAsync(user))
             {
                 return Forbid(
@@ -444,11 +358,9 @@ public class AuthorizationController : Controller
                     }));
             }
 
-            // Recupera os detalhes da aplicação do banco de dados.
             var application = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
                 throw new InvalidOperationException("Detalhes da aplicação cliente chamadora não podem ser encontrados.");
 
-            // Recupera as autorizações permanentes associadas ao usuário e à aplicação cliente chamadora.
             var authorizations = await _authorizationManager.FindAsync(
                 subject: await _userManager.GetUserIdAsync(user),
                 client: await _applicationManager.GetIdAsync(application),
@@ -456,9 +368,6 @@ public class AuthorizationController : Controller
                 type: AuthorizationTypes.Permanent,
                 scopes: request.GetScopes()).ToListAsync();
 
-            // Observação: a mesma verificação já é feita na outra ação, mas é repetida
-            // aqui para garantir que um usuário mal-intencionado não possa abusar deste endpoint apenas POST e
-            // forçá-lo a retornar uma resposta válida sem a autorização externa.
             if (!authorizations.Any() && await _applicationManager.HasConsentTypeAsync(application, ConsentTypes.External))
             {
                 return Forbid(
@@ -471,14 +380,13 @@ public class AuthorizationController : Controller
                     }));
             }
 
-            // Cria um novo principal contendo a identidade do usuário.
             principal = await _signInManager.CreateUserPrincipalAsync(user);
-
-            // Observação: neste exemplo, os escopos concedidos correspondem aos escopos solicitados
-            // mas você pode querer permitir que o usuário desmarque escopos específicos.
-            // Para isso, basta restringir a lista de escopos antes de chamar SetScopes.
             principal.SetScopes(request.GetScopes());
             principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
+            principal.AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
+            principal.AddClaim(Claims.Subject, user.Id.ToString());
+            principal.AddClaim(Claims.Email, user.Email);
+            principal.AddClaim(Claims.Name, user.UserName);
 
             foreach (var claim in principal.Claims)
             {

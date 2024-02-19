@@ -1,0 +1,24 @@
+﻿@page
+@model Solucao.Service.API.Seguranca.Pages.RegisterConfirmationModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+
+}
+
+<h1>Confirmação de Registro</h1>
+
+@if (!string.IsNullOrEmpty(Model.Email))
+{
+    <p>O seu endereço de e-mail, @Model.Email, foi registrado com sucesso.</p>
+
+    @if (Model.DisplayConfirmAccountLink)
+    {
+        <p>
+            Para confirmar o seu e-mail, por favor clique neste link: <a href="@Model.EmailConfirmationUrl">confirmar e-mail</a>
+        </p>
+    }
+}
+else
+{
+    <p>Erro: Não foi possível carregar o usuário com o e-mail especificado.</p>
+}

@@ -1,0 +1,16 @@
+﻿@page
+@model Solucao.Service.API.Seguranca.Pages.AuthenticateModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+}
+
+
+<div>Retornar para o url: @Model.ReturnUrl</div>
+
+<form method="post">
+    <input name="email" value="@Model.Email" />
+    <input name="password" value="@Model.Password" />
+
+    <input type="submit" />
+</form>

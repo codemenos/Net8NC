@@ -34,16 +34,19 @@ public static class OpenIdDictRegister
                 })
                 .AddServer(options =>
                 {
-                    options.SetAuthorizationEndpointUris("connect/authorize")
+                    options
+                        .SetAuthorizationEndpointUris("connect/authorize")
                         .SetLogoutEndpointUris("connect/logout")
-                        .SetTokenEndpointUris("connect/token");
+                        .SetTokenEndpointUris("connect/token")
+                        .SetUserinfoEndpointUris("connect/userinfo")
+                        .SetIntrospectionEndpointUris("connect/introspect")
+                        .SetVerificationEndpointUris("connect/verify");
 
                     options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
 
                     options.AllowPasswordFlow();
                     options.AllowAuthorizationCodeFlow();
-
-                    options.SetTokenEndpointUris("identidade/login");
+                    options.AllowClientCredentialsFlow();
 
                     options.AcceptAnonymousClients();
 
@@ -59,9 +62,11 @@ public static class OpenIdDictRegister
                     options.UseAspNetCore()
                         .EnableAuthorizationEndpointPassthrough()
                         .EnableLogoutEndpointPassthrough()
-                        .EnableTokenEndpointPassthrough();
+                        .EnableTokenEndpointPassthrough()
+                        .EnableUserinfoEndpointPassthrough()
+                        .EnableStatusCodePagesIntegration();
 
-                    options.AdicionarManipuladoresDeSolicitacaoDeToken();
+                    //options.AdicionarManipuladoresDeSolicitacaoDeToken();
 
                 })
                 .AddValidation(options =>

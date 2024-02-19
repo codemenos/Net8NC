@@ -4,6 +4,7 @@ using AutoMapper;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Solucao.Application.Core.Behaviors;
@@ -39,17 +40,19 @@ public static class ApplicationRegisterServices
             services.AddTransient<AuthorizationService>();
 
             services
-            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(c =>
-            {
-                c.LoginPath = "/Authenticate";
-            });
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
             services.AddTransient<ClientsSeeder>();
         }
-        
+
         services.AddEndpointsApiExplorer();
-        
+
         services.AddSwaggerGen(options => { SwaggerConfiguration.ConfigureSwaggerGen(options, configuration); });
 
         var mappingProfiles = AppDomain.CurrentDomain.GetAssemblies()

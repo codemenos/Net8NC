@@ -1,9 +1,125 @@
 @HostAddress = https://localhost:7000
-@token = eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiYXQrand0IiwiY3R5IjoiSldUIn0.kxJFtEI4RThsSdwbx2J4BxsxCmwgViTs7t8C7RuaMTSqvft-OVkJT-JQCodHh_c6LXxXwWaWDj-YFs8xgyPeTmOOAuYBade8.B67nqV0NKj6hOOn0oYdauw.Jy-fpdyTBDYW3aPXoMBTw0sfldRrsMNvwQ_9noGLdQ2vKBv6QbvJ0zQDMXbb1kR3IDxMGaRkxW5K5hyPA4ZvVK5TRkUW1jQ49hjjalI4OpTL20o7zQSCgQDR7qeExJDykj7I44uLUNr7HeDhorfyOjaZ5ZmDLBKZxQydFR-_WNnIjNR8XC2Vwxiy4F1fEvqRuz4GPQoAfWBOcV_VhsM-WcAdK18ToTMfjStyWPKE1Ym7iLngyRBbVgnnY3Vlpu_OYSTd6ebCLC4aEc8BDxapYg8Nab1ruzDJdS32LRBuUi55PcbCsk1fE_1I10bFm5ifaX3DgE4G7vCDhbCjYADPb00CjJpGfz1wr1tnb3lwMpm0RnxinYEehjN_HHNJWCZD7wfhDhUDyeHvTKu19I8RZ27rTnhH5k2cD9a-5-nV42RSgODXYDh6LNgCgJ3trF6DblINuoEtPFpSgh1-zNIDyh4RhWfP3a8IevEOFCMKG3yDzJ2ZpJkyC7F_AqYgne02h9LmuekoYhXYFZKNgsmlsPN18KoWsoER26mwJG8XQ6If9VUAtj7wZegDIF34YozACSyM538fuIBP4kG0ziNHh8H_cOOHBd1SrXPO7Nd0HNZBkdWHk-7L8q2HDATROV5s1rFZPHTAkPyPfpl2pGB4PhT-w1ph60cfDbj2RQpFSsORy5t3YjPMFWpIMXnoAiogUl54BE_NvxrkxQ61TEiy4et7LAKivyFqlRFgMbogM9RK9WRXTlxUoPEFJh2OfZBjJu9HxcZoPsjh-pUSQP_skEsYGZJQMHz7gTyY_2w_hJN-mP2-M9nntzGOJaPNIn312ovrvQE-50BkPnLz4k2IZPmaJGgjekHcaIj0Pt0rZg-3af0lEJkA_4CGwswnd4C1448kPINp2ySvGg77zCj-0pf9aShMhR8hOZuy3UmFcxV_wx6TgPCjcW4uiKeglUHcDcV7ZdQwV6Yn7bny2Cf12fPkySAYmZv96XWh0acPW4tWR03j-rmlyRh74LQ_KsWGf5WctVaf0zB8aNlQ_wNlItyUU8dn1n71wShcWZcmiPNqsJope1vtkMLsti5CK5aeoWPlfhK-4K3n_7pi4oW8RBWCH5MnAuBwtR0gDCWxZ78E_pae0hFWeaCW9QnadRAtzG2CcvE9GHsGY3NbP7CtxzZU3wVZteCyDHvqzpb3B9FW6528HoWaZA082rIKi1nHThJvf1sXHBOiVh9qPOHZjpsUdrniHfsv9U42KenG_QZI2mOEAoRcoyAGjUC6kV2gIG_J_xE1Dezvbgqc0XNnZvLgkleNt7uDJJ_HJBbOaPHH_hvhCaukOjNFf9nH2fA5Xo45ANxm-NaU3ILMF2EnBPyteBue4NO8uoC0v7DrhMPod8afVKrVSFtFooxvnw_ozYToND5LkG6oXS9WFQBY8b4bGTIQhDVCiCq_kdadH7Q5zD3tQJj0FMIgp8_F2jkvftvTh0UIR9TBk65bTaIPENjeYN0CDmcQqUQsq7mBDai4f3p_C6DxnszBBbf1_iRcyw4PhaUYfHarnYe47hq8o3F4DU08Rbg9lP-00kunb6EohQES-FB1A6OOStPEWqfbIEiCmgCPzTyNsMfu4uogjsvbOlt1DzNAPStOxd2YVnnBWjnHobYwAoTWbaYrECxFWhtp253Hj6iKKTRhIaDEMQj325lw-78khpSDeb-Lz5s.3-k4v1_In6QSyxicbb_I98FQgbzGItK2OVNErTvsEBk
+@token=eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiYXQrand0IiwiY3R5IjoiSldUIn0.kNayp5pU3gFthEDZ7dMgW6_skHPpfEN2Xl1gEfOe0dMKW2GEaLmSprwBjKBjRdfFzVQm26nzlXNc_x2ZkNilFpKQcX6dNhYY.FAvguftLFUjqMramK0gj-Q.-wWtfiFo-eUhZjXNWaj8w7YOHwbTh1IEgq6VH0WdgiydX2IRr8qqBcp3TwKNLTUOvWDDTUqDSqUY763fzkYUaKT9XVb2KOMe4AorQoZ_B1vBPAHWJKbcGOkqE1EGcJEgBhNU92r-cS_JcsU7Da63NN_PPSke5a8r66VCcytq8_DWiS95Fq-e6vcKN8Y1xENOekhxAculvwORMNkp-T8zVSOXnRKNkUxDAvLzGTB4wQGrUpSpshm2SlWbzz1Uh8k_wvmA0fyszvN1CQBy6BXxNtQePoLz-sLb2Oieiw7XdAV6pI2fMyVxV8QOR4bcsGw50R8lPBbPDjM2B6S-rJY6K83Ae6uruKt9P2FTjY0YUuykXT-BREUOzQ6MMVWfOzs55wjw6ErUf-RhcCgyOlVDi9ALaddBqfAO575GXmkrbwH9WtZfUhRMTHtAUuMkw-XnRsEnlqS1RC00kPb93vx7p2WHiRE_cidZstIQaX7UN1zGpXOjnJhTLrYX2BCLT27meCEbKK_u-mvkO9rwqnDbtPzfd_K1r-4IeA_6eZ0tWbxY-6n3obOqVt5dxkoFYGud5wEN-Pmke3RQ3puK8CMSpWVlesrrJptojZWDVsaNm0O33S2dCHzN_bjkNskNpI4XmPFwIifjRc1hFiHxGA2dlr0LgeifBvm0Oy3BGSSnbgzTkgo-wAr1eKQYFF8uzidU0Yo584aq3WpL3X24KfZX2TN4JxFjbfbEYQ7VCKYHA16mLWa_OMMPCHGCJoLo1Rj0B_NgJkKDq5Bkb5VZb5ttcdSPMvwQH4nZmc5eoNYS1bDHEqeniLoJ9tgkrbfFLRH94WrAdm1ulcwSIGeQd2RodhfClaRwQdMZiPUDuUXFdtzl1Cp9fntMiFoRNu04LZU6BN3cFv2O-oAAdrBysau4acpKmdROp4sUSWdhnWReYDJq70q5jPjgGA9qZL3O_rdWJCZgLaIma9a_OqINHuvPWn72UZhcc5-orTuabRRxwvT88K0jo0qPKFrpf4bX5aRCqQdApT8XZaVDnLsu-PbZAtt8_LuP_2sm3KCLgqfrDb3m2kHrwYFpawyl5RLTpmmymsXrDmdg2bHrn4KuflKfSo2tTOBLgJxNwmL-yz93jgEO8Jv2XTFUakCBmwcx8RTCTmZS-Jo5ZRFWpthX029UNYMee0C09cgnFgOrNBd7g3HLZ--oi4i_TOoVwBJovCT9Kw3uhkYl43B9KiqkExKgvpXl0lKJyPp2vHsvOkzNlLukhigyh5Indo3KYb2dbVtx9Irs0p36FUOA0thmiDVxqpdwryvQbMJLJcoIHKbg-RaWs1mlEAJWJw0J2aapsJc1EafzBLKoaxSebmhFEteVdpqinHWUUaBGJp_oYGxA3MIw3aRBpq05RytP0Qz7AJDmpPeQc3td-c5p8MZX6sNyF4XblLoMq9BnID4v4G6RgBHM83j7wN2ZEuPS_bGoAEEQND7f449LhuIPzF3Ot54dQOKpg-_X7R2v6bmgIDW9Mo7bMRWEP78so8ssaHfzGdDcfcn-Iuq3mXr8HUm1kXV8p5IM_NzsT31gfBg8rzMptvZw5fTdGLcNkjO5lMiat0ZuN_R8W3Qy-b4KwO0QxOt-CO_EUp7q5DHC4Zief0UkJ_ChPwAWVTpnuJkuPoSULy7vZp7l_OLn_6kB-NuGOdBI0bZ_0GtIo41CMA5fSyTl8yY.SA9jprthygS4AoA1WGEgQRKbthMNiprAFZeeoSsLLps
 
 
 
-GET {HostAddress}/requires-auth
+
+###
+### POST Request to /Identidade/register
+###
+POST {{HostAddress}}/Identidade/register
+Content-Type: application/json
+
+{
+  "email": "example@example.com",
+  "password": "examplePassword"
+}
+
+###
+### POST Request to /Identidade/login
+###
+POST {{HostAddress}}/Identidade/login?useCookies=false&useSessionCookies=false
+Content-Type: application/json
+
+{
+  "email": "fabiobraga.net@gmail.com",
+  "password": "!QAZ2wsx12"
+}
+
+###
+### POST Request to /Identidade/refresh
+###
+POST {{HostAddress}}/Identidade/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "exampleRefreshToken"
+}
+
+###
+### GET Request to /Identidade/confirmEmail
+###
+GET {{HostAddress}}/Identidade/confirmEmail?userId=exampleUserId&code=exampleCode&changedEmail=exampleChangedEmail
+
+###
+### POST Request to /Identidade/resendConfirmationEmail
+###
+POST {{HostAddress}}/Identidade/resendConfirmationEmail
+Content-Type: application/json
+
+{
+  "email": "example@example.com"
+}
+
+###
+### POST Request to /Identidade/forgotPassword
+###
+POST {{HostAddress}}/Identidade/forgotPassword
+Content-Type: application/json
+
+{
+  "email": "example@example.com"
+}
+
+###
+### POST Request to /Identidade/resetPassword
+###
+POST {{HostAddress}}/Identidade/resetPassword
+Content-Type: application/json
+
+{
+  "email": "example@example.com",
+  "resetCode": "exampleResetCode",
+  "newPassword": "newExamplePassword"
+}
+
+###
+### POST Request to /Identidade/manage/2fa
+###
+POST {{HostAddress}}/Identidade/manage/2fa
+Content-Type: application/json
+
+{
+  "enable": true,
+  "twoFactorCode": "exampleTwoFactorCode",
+  "resetSharedKey": true,
+  "resetRecoveryCodes": true,
+  "forgetMachine": true
+}
+
+###
+### GET Request to /Identidade/manage/info
+###
+GET {{HostAddress}}/Identidade/manage/info
+
+###
+### POST Request to /Identidade/manage/info
+###
+POST {{HostAddress}}/Identidade/manage/info
+Content-Type: application/json
+
+{
+  "newEmail": "newExample@example.com",
+  "newPassword": "newExamplePassword",
+  "oldPassword": "oldExamplePassword"
+}
+
+###
+### GET Request to /
+###
+GET {{HostAddress}}/
+
+###
+### GET Request to /config/swaggerconfig.json
+###
+GET {{HostAddress}}/config/swaggerconfig.json
+
+
+###
+### AUTORIZACAO
+###
+
+GET {{HostAddress}}/requires-auth
 Authorization: Bearer {{token}}
 
 ###
@@ -11,6 +127,7 @@ Authorization: Bearer {{token}}
 ###
 
 GET {{HostAddress}}/connect/authorize
+
 
 ###
 ### POST Request to /connect/authorize (with form data)
