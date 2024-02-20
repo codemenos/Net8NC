@@ -37,7 +37,7 @@ public static class ApplicationRegisterServices
         {
             services.AddOpenIdDict(type, configuration);
             services.AddRazorPages();
-            services.AddTransient<AuthorizationService>();
+            services.AddTransient<AutorizacaoService>();
 
             services
                 .AddAuthentication(options =>
