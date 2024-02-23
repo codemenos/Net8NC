@@ -5,12 +5,40 @@
 @{
 }
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/Login.css" />
+</head>
+<body>
 
-<div>Retornar para o url: @Model.ReturnUrl</div>
+    <form id="accesspanel" method="post">
+        <h1 id="litheader">Autenticação</h1>
+        <div class="inset">
+            <p>
+                <input type="text" name="email" id="email" placeholder="Email">
+            </p>
+            <p>
+                <input type="password" name="password" id="password" placeholder="Senha">
+            </p>
+            <div style="text-align: center;">
+                <div class="checkboxouter">
+                    <input type="checkbox" name="rememberme" id="remember" value="Remember">
+                    <label class="checkbox"></label>
+                </div>
+                <label for="remember">Lembrar da senha?</label>
+            </div>
+            <input class="loginLoginValue" type="hidden" name="rurl" value="@Model.ReturnUrl" />
+        </div>
+        <p class="p-container">
+            <input type="submit" name="Login" id="go" value="Acessar">
+        </p>
+    </form>
 
-<form method="post">
-    <input name="email" value="@Model.Email" />
-    <input name="password" value="@Model.Password" />
+</body>
+</html>
 
-    <input type="submit" />
-</form>
+<script src="~/js/Login.js"></script>

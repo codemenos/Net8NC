@@ -231,7 +231,7 @@ public partial class SwaggerConfiguration
                     TokenUrl = new Uri("https://localhost:7000/connect/token"),
                     Scopes = new Dictionary<string, string>
                     {
-                        { "api1", "resource_server_1" }
+                        { "API-Seguranca", "Todos" }
                     }
                 }
             }

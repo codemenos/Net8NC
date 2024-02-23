@@ -4,9 +4,10 @@ using AutoMapper;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Validation.AspNetCore;
 using Solucao.Application.Core.Behaviors;
 using Solucao.Infrastructure.Shared.Common;
 using Solucao.Service.API.Core.Configurations;
@@ -48,7 +49,35 @@ public static class ApplicationRegisterServices
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            services.AddTransient<ClientsSeeder>();
+            services.AddOpenIddict()
+                .AddValidation(options =>
+                {
+                    options.SetIssuer("https://localhost:7000/");
+                    options.SetClientId("seguranca-client");
+                    options.AddAudiences("Todos");
+                    options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
+                    options.UseSystemNetHttp();
+                    options.UseAspNetCore();
+                });
+
+            services.AddTransient<CargaPadraoOpenIddictService>();
+        }
+
+        if (type.AssemblyQualifiedName.Contains("Cadastro"))
+        {
+            services.AddOpenIddict()
+                .AddValidation(options =>
+                {
+                    options.SetIssuer("https://localhost:7000/");
+                    options.SetClientId("cadastro-client");
+                    options.AddAudiences("Todos");
+                    options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
+                    options.UseSystemNetHttp();
+                    options.UseAspNetCore();
+                });
+
+            services.AddAuthentication(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
+            services.AddAuthorization();
         }
 
         services.AddEndpointsApiExplorer();

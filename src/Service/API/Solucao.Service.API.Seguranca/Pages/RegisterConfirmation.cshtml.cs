@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Solucao.Domain.Seguranca.Aggregates;
 
 public class RegisterConfirmationModel : PageModel
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<SecurityUser> _userManager;
     private readonly IEmailSender _sender;
 
-    public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender)
+    public RegisterConfirmationModel(UserManager<SecurityUser> userManager, IEmailSender sender)
     {
         _userManager = userManager;
         _sender = sender;

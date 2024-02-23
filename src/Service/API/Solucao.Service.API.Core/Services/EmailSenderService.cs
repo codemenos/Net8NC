@@ -9,28 +9,19 @@ public class EmailSenderService : IEmailSender<SecurityUser>
 {
     public async Task SendConfirmationLinkAsync(SecurityUser user, string email, string confirmationLink)
     {
-        // Implemente o envio de e-mail de confirmação aqui
-        // Por exemplo, você pode usar um serviço de e-mail como SendGrid, SMTP, etc.
-        // Aqui está um exemplo de implementação fictícia:
-        Console.WriteLine($"Sending confirmation link to {email} for user {user.UserName}. Link: {confirmationLink}");
+        // falta implementar o envio de e-mail de confirmação aqui
         await Task.CompletedTask;
     }
 
     public async Task SendPasswordResetCodeAsync(SecurityUser user, string email, string resetCode)
     {
-        // Implemente o envio de e-mail com o código de redefinição de senha aqui
-        // Por exemplo, você pode usar um serviço de e-mail como SendGrid, SMTP, etc.
-        // Aqui está um exemplo de implementação fictícia:
-        Console.WriteLine($"Sending password reset code to {email} for user {user.UserName}. Code: {resetCode}");
+        // falta implementar o envio de e-mail com o código de redefinição de senha aqui
         await Task.CompletedTask;
     }
 
     public async Task SendPasswordResetLinkAsync(SecurityUser user, string email, string resetLink)
     {
-        // Implemente o envio de e-mail com o link de redefinição de senha aqui
-        // Por exemplo, você pode usar um serviço de e-mail como SendGrid, SMTP, etc.
-        // Aqui está um exemplo de implementação fictícia:
-        Console.WriteLine($"Sending password reset link to {email} for user {user.UserName}. Link: {resetLink}");
+        // falta implementar o envio de e-mail com o link de redefinição de senha aqui
         await Task.CompletedTask;
     }
 }

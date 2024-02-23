@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="OpenIddict" />
     <PackageReference Include="OpenIddict.EntityFrameworkCore" />
@@ -23,11 +24,6 @@
     <ProjectReference Include="..\..\..\Application\Solucao.Application.Core\Solucao.Application.Core.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\Shared\Solucao.Infrastructure.Shared\Solucao.Infrastructure.Shared.csproj" />
     <ProjectReference Include="..\Solucao.Service.API.Core\Solucao.Service.API.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
 </Project>

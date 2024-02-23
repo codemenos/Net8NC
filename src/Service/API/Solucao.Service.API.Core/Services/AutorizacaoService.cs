@@ -1,6 +1,7 @@
 ﻿namespace Solucao.Service.API.Core.Services;
 
 using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Web;
 using k8s.KubeConfigModels;
@@ -48,7 +49,8 @@ public class AutorizacaoService
         var (solicitacao, aplicacao) = await ObterSolicitacaoEAplicacaoAsync(httpContext);
 
         var erroDeConsentimento = await VerificarTipoConsentimentoAsync(solicitacao.ClientId);
-        if (!string.IsNullOrEmpty(erroDeConsentimento))
+        var temErroDeConsentimento = !string.IsNullOrEmpty(erroDeConsentimento);
+        if (temErroDeConsentimento)
         {
             return RetornarErroDeConsentimento(controller, erroDeConsentimento);
         }
@@ -105,8 +107,8 @@ public class AutorizacaoService
             scopes: solicitacao.GetScopes()).ToListAsync();
 
         // Verificar se há autorização externa
-        var (respostaValida, resultadoForbid) = await VerificarAutorizacaoExternaAsync(controller, autorizacoes, aplicacao);
-        if (respostaValida)
+        var (autorizacaoExterna, resultadoForbid) = await VerificarAutorizacaoExternaAsync(controller, autorizacoes, aplicacao);
+        if (autorizacaoExterna)
         {
             return resultadoForbid;
         }
@@ -142,174 +144,226 @@ public class AutorizacaoService
 
     public async Task<IActionResult> EncerrarSessao(ControllerBase controller)
     {
-        return controller.RedirectToPage("/Account/Logout", new
-        {
-            logoutId = controller.Request.Query["id_token_hint"],
-            redirectUri = controller.Request.Query["post_logout_redirect_uri"]
-        });
+        const string ID_TOKEN_HINT = "id_token_hint";
+        const string POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
+        const string PATH_LOGOUT = "/Account/Logout";
+
+        await Task.Delay(0);
+
+        var logoutId = controller.Request.Query[ID_TOKEN_HINT];
+        var redirectUri = controller.Request.Query[POST_LOGOUT_REDIRECT_URI];
+
+        return controller.RedirectToPage(PATH_LOGOUT, new { logoutId, redirectUri });
     }
 
     public async Task<IActionResult> EncerrarSessaoPost(ControllerBase controller)
     {
+        const string PATH_REDIRECT = "/";
+
         await _signInManager.SignOutAsync();
 
-        return controller.SignOut(
-            authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-            properties: new AuthenticationProperties
-            {
-                RedirectUri = "/"
-            });
+        var authenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme;
+        var properties = new AuthenticationProperties { RedirectUri = PATH_REDIRECT };
+
+        return controller.SignOut(authenticationSchemes: authenticationSchemes, properties: properties);
     }
 
-    public async Task<IActionResult> ObterOuTrocaToken(ControllerBase controller, HttpContext httpContext)
+    public async Task<IActionResult> ObterOuTrocarToken(ControllerBase controller, HttpContext httpContext)
     {
+        const string ErroRequisicaoInvalida = "A solicitação não pode ser recuperada para obter ou trocar token.";
+        //const string ErroDescricaoPermissaoNegada = "O usuário logado não tem permissão para acessar esta aplicação cliente.";
+        const string TipoConcessaoNaoSuportado = "Tipo de concessão não suportado.";
+
         var request = httpContext.GetOpenIddictServerRequest() ??
-            throw new InvalidOperationException("A solicitação OpenID Connect não pode ser recuperada.");
+            throw new InvalidOperationException(ErroRequisicaoInvalida);
 
-        if (request.IsPasswordGrantType())
+        var (EhConcessaoDeSenha, EhAutorizadoOuDispositivoOuAtualizarToken) = ObterObjetivoDaRequisicao(request);
+        if (EhConcessaoDeSenha)
         {
-            var user = await _userManager.FindByNameAsync(request.Username);
-            if (user is null)
-            {
-                return controller.Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "O par de nome de usuário/senha é inválido."
-                    }));
-            }
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
-            if (!result.Succeeded)
-            {
-                return controller.Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "O par de nome de usuário/senha é inválido."
-                    }));
-            }
-
-            var principal = await _signInManager.CreateUserPrincipalAsync(user);
-            principal.SetScopes(request.GetScopes());
-            principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
-            principal.AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
-            principal.AddClaim(Claims.Subject, user.Id.ToString());
-            principal.AddClaim(Claims.Email, user.Email);
-            principal.AddClaim(Claims.Name, user.UserName);
-
-            foreach (var claim in principal.Claims)
-            {
-                claim.SetDestinations(ObterDestinos(principal, claim));
-            }
-
-            // Retornar um SignInResult solicitará ao OpenIddict que emita os tokens de acesso/identidade apropriados.
-            return controller.SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            return await ProcederParaTipoConcessaoRequisicaoDeSenha(controller, request);
         }
 
-        else if (request.IsAuthorizationCodeGrantType() || request.IsDeviceCodeGrantType() || request.IsRefreshTokenGrantType())
+        if (EhAutorizadoOuDispositivoOuAtualizarToken)
         {
-            var principal = (await httpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal;
-
-            var user = await _userManager.GetUserAsync(principal);
-            if (user is null)
-            {
-                return controller.Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "O usuário associado ao código de autorização/dispositivo/código de atualização não pôde ser encontrado."
-                    }));
-            }
-
-            if (!await _signInManager.CanSignInAsync(user))
-            {
-                return controller.Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "O usuário não pode trocar tokens."
-                    }));
-            }
-
-            var application = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
-                throw new InvalidOperationException("Detalhes da aplicação cliente chamadora não podem ser encontrados.");
-
-            var authorizations = await _authorizationManager.FindAsync(
-                subject: await _userManager.GetUserIdAsync(user),
-                client: await _applicationManager.GetIdAsync(application),
-                status: Statuses.Valid,
-                type: AuthorizationTypes.Permanent,
-                scopes: request.GetScopes()).ToListAsync();
-
-            if (!authorizations.Any() && await _applicationManager.HasConsentTypeAsync(application, ConsentTypes.External))
-            {
-                return controller.Forbid(
-                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                    properties: new AuthenticationProperties(new Dictionary<string, string>
-                    {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.ConsentRequired,
-                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
-                            "O usuário logado não tem permissão para acessar esta aplicação cliente."
-                    }));
-            }
-
-            principal = await _signInManager.CreateUserPrincipalAsync(user);
-            principal.SetScopes(request.GetScopes());
-            principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
-            principal.AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
-            principal.AddClaim(Claims.Subject, user.Id.ToString());
-            principal.AddClaim(Claims.Email, user.Email);
-            principal.AddClaim(Claims.Name, user.UserName);
-
-            foreach (var claim in principal.Claims)
-            {
-                claim.SetDestinations(ObterDestinos(principal, claim));
-            }
-
-            // Retornar um SignInResult solicitará ao OpenIddict que emita os tokens de acesso/identidade apropriados.
-            return controller.SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            return await ProcederParaTipoConcessaoAutorizadoOuDispositivoOuAtualizarToken(controller, httpContext, request);
         }
 
-        throw new NotImplementedException("Tipo de concessão não suportado.");
+        throw new NotImplementedException(TipoConcessaoNaoSuportado);
     }
 
     //------------------------------------------------------------------------------------
 
+    private async Task<IActionResult> ProcederParaTipoConcessaoAutorizadoOuDispositivoOuAtualizarToken(ControllerBase controller, HttpContext httpContext, OpenIddictRequest request)
+    {
+        const string ErroDescricaoUsuarioNaoEncontrado = "O usuário associado ao código de autorização/dispositivo/código de atualização não pôde ser encontrado.";
+        const string ErroDescricaoUsuarioNaoPodeTrocarTokens = "O usuário não pode trocar tokens.";
+        const string ErroDetalhesAplicacaoNaoEncontrados = "Detalhes da aplicação cliente chamadora não podem ser encontrados.";
+
+        var principal = (await httpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal;
+
+        var user = await _userManager.GetUserAsync(principal);
+        if (user is null)
+        {
+            return CriarRespostaUsuarioNulo(controller, ErroDescricaoUsuarioNaoEncontrado);
+        }
+
+        var usuarioNaoPodeFazerLogin = !await _signInManager.CanSignInAsync(user);
+        if (usuarioNaoPodeFazerLogin)
+        {
+            return CriarRespostaUsuarioNaoPodeFazerLogin(controller, ErroDescricaoUsuarioNaoPodeTrocarTokens);
+        }
+
+        var aplicacao = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
+            throw new InvalidOperationException(ErroDetalhesAplicacaoNaoEncontrados);
+
+        var listaAutorizacoes = await _authorizationManager.FindAsync(
+            subject: await _userManager.GetUserIdAsync(user),
+            client: await _applicationManager.GetIdAsync(aplicacao),
+            status: Statuses.Valid,
+            type: AuthorizationTypes.Permanent,
+            scopes: request.GetScopes()).ToListAsync();
+
+        var (autorizacaoExterna, ResultadoForbid) = await VerificarAutorizacaoExternaAsync(controller, listaAutorizacoes, aplicacao);
+        if (autorizacaoExterna)
+        {
+            return ResultadoForbid;
+        }
+
+        principal = await _signInManager.CreateUserPrincipalAsync(user);
+        principal.SetScopes(request.GetScopes());
+        principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
+        principal.AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
+        principal.AddClaim(Claims.Subject, user.Id.ToString());
+        principal.AddClaim(Claims.Email, user.Email);
+        principal.AddClaim(Claims.Name, user.UserName);
+
+        foreach (var claim in principal.Claims)
+        {
+            claim.SetDestinations(ObterDestinos(principal, claim));
+        }
+
+        // Retornar um SignInResult solicitará ao OpenIddict que emita os tokens de acesso/identidade apropriados.
+        return controller.SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
+
+    private async Task<IActionResult> ProcederParaTipoConcessaoRequisicaoDeSenha(ControllerBase controller, OpenIddictRequest request)
+    {
+        const string ErroDescricaoConcessaoInvalida = "O par de nome de usuário/senha é inválido.";
+
+        var user = await _userManager.FindByNameAsync(request.Username);
+        if (user is null)
+        {
+            return controller.Forbid(
+                authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                properties: new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = ErroDescricaoConcessaoInvalida
+                }));
+        }
+
+        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
+        if (!result.Succeeded)
+        {
+            return controller.Forbid(
+                authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                properties: new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = ErroDescricaoConcessaoInvalida
+                }));
+        }
+
+        var principal = await _signInManager.CreateUserPrincipalAsync(user);
+        principal.SetScopes(request.GetScopes());
+        principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
+        principal.AddClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
+        principal.AddClaim(Claims.Subject, user.Id.ToString());
+        principal.AddClaim(Claims.Email, user.Email);
+        principal.AddClaim(Claims.Name, user.UserName);
+
+        foreach (var claim in principal.Claims)
+        {
+            claim.SetDestinations(ObterDestinos(principal, claim));
+        }
+
+        // Retornar um SignInResult solicitará ao OpenIddict que emita os tokens de acesso/identidade apropriados.
+        return controller.SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
+
+    private (bool EhConcessaoDeSenha, bool EhAutorizadoOuDispositivoOuAtualizarToken) ObterObjetivoDaRequisicao(OpenIddictRequest request)
+    {
+        var ehConcessaoDeSenha = request.IsPasswordGrantType();
+        var ehAutorizadoOuDispositivoOuAtualizarToken = request.IsAuthorizationCodeGrantType() || request.IsDeviceCodeGrantType() || request.IsRefreshTokenGrantType();
+
+        return (ehConcessaoDeSenha, ehAutorizadoOuDispositivoOuAtualizarToken);
+    }
+
+    public IActionResult CriarRespostaComPropriedades(ControllerBase controller, string erro, string descricaoErro)
+    {
+        var propriedades = CriarPropriedadesDeAutenticacao(erro, descricaoErro);
+
+        return controller.Forbid(
+            authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+            properties: propriedades);
+    }
+
+    private AuthenticationProperties CriarPropriedadesDeAutenticacao(string erro, string descricaoErro)
+    {
+        return new AuthenticationProperties(new Dictionary<string, string>
+        {
+            [OpenIddictServerAspNetCoreConstants.Properties.Error] = erro,
+            [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = descricaoErro
+        });
+    }
+
+    public IActionResult CriarRespostaUsuarioNulo(ControllerBase controller, string descricaoErro)
+    {
+        return CriarRespostaComPropriedades(controller, Errors.InvalidGrant, descricaoErro);
+    }
+
+    public IActionResult CriarRespostaUsuarioNaoPodeFazerLogin(ControllerBase controller, string descricaoErro)
+    {
+        return CriarRespostaComPropriedades(controller, Errors.InvalidGrant, descricaoErro);
+    }
+
     public async Task<(OpenIddictRequest request, object application)> ObterSolicitacaoEAplicacaoAsync(HttpContext httpContext)
     {
+        const string ErroSolicitacaoNaoRecuperada = "A solicitação OpenID Connect não pode ser recuperada.";
+        const string ErroDetalhesAplicativoNaoEncontrados = "Detalhes do aplicativo cliente chamador não podem ser encontrados.";
+
         var request = httpContext.GetOpenIddictServerRequest() ??
-                      throw new InvalidOperationException("A solicitação OpenID Connect não pode ser recuperada.");
+                        throw new InvalidOperationException(ErroSolicitacaoNaoRecuperada);
 
         var application = await _applicationManager.FindByClientIdAsync(request.ClientId) ??
-                          throw new InvalidOperationException("Detalhes do aplicativo cliente chamador não podem ser encontrados.");
+                            throw new InvalidOperationException(ErroDetalhesAplicativoNaoEncontrados);
 
         return (request, application);
     }
 
     public async Task<string> VerificarTipoConsentimentoAsync(string clientId)
     {
+        const string ErroClientIdNuloOuVazio = "ClientId não pode ser nulo ou vazio.";
+        const string ErroDetalhesAplicativoNaoEncontrados = "Detalhes do aplicativo cliente não encontrados.";
+        const string ErroTipoConsentimentoNaoExplicito = "Apenas clientes com tipo de consentimento explícito são permitidos.";
+
         if (string.IsNullOrEmpty(clientId))
         {
-            return "ClientId não pode ser nulo ou vazio.";
+            return ErroClientIdNuloOuVazio;
         }
 
         // Buscar informações do aplicativo cliente
         var application = await _applicationManager.FindByClientIdAsync(clientId);
         if (application == null)
         {
-            return "Detalhes do aplicativo cliente não encontrados.";
+            return ErroDetalhesAplicativoNaoEncontrados;
         }
 
         // Verificar o tipo de consentimento do aplicativo cliente
         var consentType = await _applicationManager.GetConsentTypeAsync(application);
         if (consentType != ConsentTypes.Explicit)
         {
-            return "Apenas clientes com tipo de consentimento explícito são permitidos.";
+            return ErroTipoConsentimentoNaoExplicito;
         }
 
         return string.Empty;
@@ -326,15 +380,19 @@ public class AutorizacaoService
             }));
     }
 
-    public async Task<(bool RespostaValida, ForbidResult ResultadoForbid)> VerificarAutorizacaoExternaAsync(ControllerBase controller, List<object> autorizacoes, object aplicacao)
-    {    
-        if (!autorizacoes.Any() && await _applicationManager.HasConsentTypeAsync(aplicacao, ConsentTypes.External))
+    public async Task<(bool AutorizacaoExterna, ForbidResult ResultadoForbid)> VerificarAutorizacaoExternaAsync(ControllerBase controller, List<object> autorizacoes, object aplicacao)
+    {
+        const string ErroPermissaoNegada = "O usuário logado não tem permissão para acessar esta aplicação cliente.";
+
+        var semAutorizacoes = !autorizacoes.Any();
+        var consentimentoExterno = await _applicationManager.HasConsentTypeAsync(aplicacao, ConsentTypes.External);
+        var autorizacaoExternaRequerida = semAutorizacoes && consentimentoExterno;
+        if (autorizacaoExternaRequerida)
         {
             var propriedades = new AuthenticationProperties(new Dictionary<string, string>
             {
                 [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.ConsentRequired,
-                [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
-                    "O usuário logado não tem permissão para acessar esta aplicação cliente."
+                [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = ErroPermissaoNegada
             });
 
             var resultadoForbid = new ForbidResult(
@@ -360,8 +418,10 @@ public class AutorizacaoService
     {
         yield return Destinations.AccessToken;
 
-        if ((reivindicacao.Type == principal.GetClaim(Claims.Role)) ||
-            (reivindicacao.Type == Claims.Role && principal.HasClaim(Claims.Role, reivindicacao.Value)))
+        var ReivindicacaoTipoIgualFuncaoPrincipal = reivindicacao.Type.Equals(principal.GetClaim(Claims.Role));
+        var ReivindicacaoFuncaoPrincipalValor = reivindicacao.Type.Equals(Claims.Role) && principal.HasClaim(Claims.Role, reivindicacao.Value);
+        var ReivindicacaoCorrespondeFuncaoPrincipal = ReivindicacaoTipoIgualFuncaoPrincipal || ReivindicacaoFuncaoPrincipalValor;
+        if (ReivindicacaoCorrespondeFuncaoPrincipal)
         {
             yield return Destinations.AccessToken;
             yield return Destinations.IdentityToken;
@@ -372,7 +432,10 @@ public class AutorizacaoService
     {
         List<string> destinosPermitidos = [];
 
-        if (reivindicacao.Type == OpenIddictConstants.Claims.Name || reivindicacao.Type == OpenIddictConstants.Claims.Email)
+        var reivindicacaoEhNome = reivindicacao.Type.Equals(OpenIddictConstants.Claims.Name);
+        var reivindicacaoEhEmail = reivindicacao.Type.Equals(OpenIddictConstants.Claims.Email);
+        var reivindicacaoCorresponde = reivindicacaoEhNome || reivindicacaoEhEmail;
+        if (reivindicacaoCorresponde)
         {
             destinosPermitidos.Add(OpenIddictConstants.Destinations.AccessToken);
         }
@@ -382,36 +445,41 @@ public class AutorizacaoService
 
     public Dictionary<string, StringValues> ObterParametros(HttpContext httpContext, List<string> excluindo)
     {
-        if (httpContext.Request.HasFormContentType)
+        var possuiConteudoNoFormulario = httpContext.Request.HasFormContentType;
+        if (possuiConteudoNoFormulario)
         {
             return ObterParametrosDoFormulario(httpContext, excluindo);
         }
-        else
-        {
-            return ObterParametrosDaConsulta(httpContext, excluindo);
-        }
+
+        return ObterParametrosDaConsulta(httpContext, excluindo);
     }
 
     public Dictionary<string, StringValues> ObterParametrosDoFormulario(HttpContext httpContext, List<string> excluindo)
     {
-        var resultado = httpContext.Request.Form
+        // Filtrar o conteúdo do formulário para que não tenha as chaves especificadas no excluindo 
+        var formularioFiltrado = httpContext.Request.Form
             .Where(v => !excluindo.Contains(v.Key))
             .ToDictionary(v => v.Key, v => v.Value);
 
-        return resultado;
+        return formularioFiltrado;
     }
 
     public Dictionary<string, StringValues> ObterParametrosDaConsulta(HttpContext httpContext, List<string> excluindo)
     {
-        var resultado = httpContext.Request.Query
+        // Filtrar o conteúdo da consulta para que não tenha as chaves especificadas no excluindo
+        var consultaFiltrada = httpContext.Request.Query
             .Where(v => !excluindo.Contains(v.Key))
             .ToDictionary(v => v.Key, v => v.Value);
 
-        return resultado;
+        return consultaFiltrada;
     }
 
     public async Task<(SecurityUser usuario, IActionResult resultadoDesafio)> ObterUsuarioOuDesafiarAutenticacaoAsync(ClaimsPrincipal usuarioPrincipal, ControllerBase controllerBase)
     {
+        const string ChaveRedirectUri = "RedirectUri";
+        const string AcaoAutorizacao = "Authorize";
+        const string ControladorAutorizacao = "Authorization";
+
         // Verificar se o usuário está autenticado
         if (usuarioPrincipal.Identity != null && usuarioPrincipal.Identity.IsAuthenticated)
         {
@@ -427,7 +495,7 @@ public class AutorizacaoService
             // Se o usuário não estiver autenticado, desafie a autenticação
             var properties = new Dictionary<string, string?>
             {
-                ["RedirectUri"] = controllerBase.Url.Action("Authorize", "Authorization")
+                [ChaveRedirectUri] = controllerBase.Url.Action(AcaoAutorizacao, ControladorAutorizacao)
             };
 
             var resultadoDesafio = new ChallengeResult(
@@ -444,6 +512,7 @@ public class AutorizacaoService
         {
             // Fazer logoff se o prompt for de login
             await contexto.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
             return new ChallengeResult(
                 authenticationSchemes: new[] { CookieAuthenticationDefaults.AuthenticationScheme },
                 properties: new AuthenticationProperties
@@ -455,11 +524,14 @@ public class AutorizacaoService
         return null;
     }
 
-    public string ConstruirUrlRedirecionamento(HttpRequest request, IDictionary<string, StringValues> parametrosOAuth)
+    public string ConstruirUrlRedirecionamento(HttpRequest requisicao, IDictionary<string, StringValues> parametrosOAuth)
     {
-        var url = request.PathBase + request.Path + QueryString.Create(parametrosOAuth);
+        var caminhoBase = requisicao.PathBase;
+        var caminhoDaRequisicao = requisicao.Path;
+        var parametrosDeConsulta = QueryString.Create(parametrosOAuth);
+        var urlRedirecionamento = string.Concat(caminhoBase, caminhoDaRequisicao, parametrosDeConsulta);
 
-        return url;
+        return urlRedirecionamento;
     }
 
     public string ObterValorReivindicacaoUsuario(ClaimsPrincipal usuario, string nomeClaimConsentimento)
@@ -467,20 +539,23 @@ public class AutorizacaoService
         return usuario.FindFirstValue(nomeClaimConsentimento);
     }
 
-    public async Task<IActionResult> VerificarReivindicacaoConsentimentoERedirecionarAsync(ControllerBase controller, HttpContext contexto, ClaimsPrincipal usuario, OpenIddictRequest solicitacao, IDictionary<string, StringValues> parametrosOAuth)
+    public async Task<IActionResult> VerificarReivindicacaoConsentimentoERedirecionarAsync(ControllerBase controlador, HttpContext contexto, ClaimsPrincipal usuario, OpenIddictRequest solicitacao, IDictionary<string, StringValues> parametrosOAuth)
     {
-        const string ConsentNaming = "consent";
-        const string GrantAccessValue = "Grant";
+        const string NomeConsentimento = "consent";
+        const string ValorAcessoPermitido = "Grant";
+        const string ParteCaminhoConsentimento = "/Consent?ReturnUrl=";
 
-        var reivindicacaoUsuario = ObterValorReivindicacaoUsuario(usuario, ConsentNaming);
+        var reivindicacaoUsuario = ObterValorReivindicacaoUsuario(usuario, NomeConsentimento);
 
-        if (reivindicacaoUsuario != GrantAccessValue || solicitacao.HasPrompt(Prompts.Consent))
+        if (reivindicacaoUsuario != ValorAcessoPermitido || solicitacao.HasPrompt(Prompts.Consent))
         {
             // Redirecionar para a página de consentimento
             await contexto.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var returnUrl = HttpUtility.UrlEncode(ConstruirUrlRedirecionamento(contexto.Request, parametrosOAuth));
-            var consentRedirectUrl = $"/Consent?returnUrl={returnUrl}";
-            return controller.Redirect(consentRedirectUrl);
+
+            var retornoUrl = HttpUtility.UrlEncode(ConstruirUrlRedirecionamento(contexto.Request, parametrosOAuth));
+            var urlRedirecionamentoConsentimento = string.Concat(ParteCaminhoConsentimento, retornoUrl);
+
+            return controlador.Redirect(urlRedirecionamentoConsentimento);
         }
 
         return null;
@@ -490,12 +565,12 @@ public class AutorizacaoService
     {
         var userId = await _userManager.GetUserIdAsync(usuario);
         var reivindicacoes = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, userId),
-        new Claim(Claims.Subject, userId),
-        new Claim(Claims.Email, usuario.Email),
-        new Claim(Claims.Name, usuario.UserName)
-    };
+        {
+            new (ClaimTypes.NameIdentifier, userId),
+            new (Claims.Subject, userId),
+            new (Claims.Email, usuario.Email),
+            new (Claims.Name, usuario.UserName)
+        };
 
         return (userId, reivindicacoes);
     }

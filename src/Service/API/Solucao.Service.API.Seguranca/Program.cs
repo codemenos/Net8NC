@@ -65,11 +65,10 @@ public partial class Program
 
         using (var scope = app.Services.CreateScope())
         {
-            var sender = scope.ServiceProvider.GetRequiredService<ClientsSeeder>();
-            sender.AddClients().GetAwaiter().GetResult();
-            sender.AddScopes().GetAwaiter().GetResult();
+            var cargaPadrao = scope.ServiceProvider.GetRequiredService<CargaPadraoOpenIddictService>();
+            cargaPadrao.AdicionarClientesDeAutenticacao(requerExclusaoDoLegado: true).GetAwaiter().GetResult();
+            cargaPadrao.AdicionarEscoposDeAutorizacao(requerExclusaoDoLegado: true).GetAwaiter().GetResult();
         }
-
 
         app.Run();
     }
