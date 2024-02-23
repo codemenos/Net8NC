@@ -1,4 +1,5 @@
 namespace Solucao.Service.API.Seguranca.Areas.Identity.Pages.Account.Manage;
+
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +7,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -16,57 +16,33 @@ public class EmailModel : PageModel
 {
     private readonly UserManager<SecurityUser> _userManager;
     private readonly SignInManager<SecurityUser> _signInManager;
-    private readonly IEmailSender _emailSender;
+    private readonly IEmailSender<SecurityUser> _emailSender;
 
     public EmailModel(
         UserManager<SecurityUser> userManager,
         SignInManager<SecurityUser> signInManager,
-        IEmailSender emailSender)
+        IEmailSender<SecurityUser> emailSender)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public string Email { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public bool IsEmailConfirmed { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     [TempData]
     public string StatusMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [Required]
         [EmailAddress]
-        [Display(Name = "New email")]
+        [Display(Name = "Novo email")]
         public string NewEmail { get; set; }
     }
 
@@ -88,7 +64,7 @@ public class EmailModel : PageModel
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            return NotFound($"Não foi possível obter o usuário com o ID '{_userManager.GetUserId(User)}'.");
         }
 
         await LoadAsync(user);
@@ -100,7 +76,7 @@ public class EmailModel : PageModel
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            return NotFound($"Não foi possível obter o usuário com o ID '{_userManager.GetUserId(User)}'.");
         }
 
         if (!ModelState.IsValid)
@@ -120,16 +96,17 @@ public class EmailModel : PageModel
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
+            await _emailSender.SendConfirmationLinkAsync(user,
                 Input.NewEmail,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                $"Confirme sua conta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
-            StatusMessage = "Confirmation link to change email sent. Please check your email.";
+            StatusMessage = "Link de confirmação para alterar o email enviado. Por favor, verifique seu email.";
+
             return RedirectToPage();
         }
 
-        StatusMessage = "Your email is unchanged.";
+        StatusMessage = "Seu email não foi alterado.";
+
         return RedirectToPage();
     }
 
@@ -138,12 +115,13 @@ public class EmailModel : PageModel
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            return NotFound($"Não foi possível obter o usuário com o ID '{_userManager.GetUserId(User)}'.");
         }
 
         if (!ModelState.IsValid)
         {
             await LoadAsync(user);
+
             return Page();
         }
 
@@ -154,14 +132,12 @@ public class EmailModel : PageModel
         var callbackUrl = Url.Page(
             "/Account/ConfirmEmail",
             pageHandler: null,
-            values: new { area = "Identity", userId = userId, code = code },
+            values: new { area = "Identity", userId, code },
             protocol: Request.Scheme);
-        await _emailSender.SendEmailAsync(
-            email,
-            "Confirm your email",
-            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+        await _emailSender.SendConfirmationLinkAsync(user, email, "Por favor, confirme sua conta: <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
-        StatusMessage = "Verification email sent. Please check your email.";
+        StatusMessage = "Email de verificação enviado. Por favor, verifique seu email.";
+
         return RedirectToPage();
     }
 }

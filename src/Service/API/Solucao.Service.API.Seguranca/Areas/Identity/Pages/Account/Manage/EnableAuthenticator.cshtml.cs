@@ -160,7 +160,7 @@ public class EnableAuthenticatorModel : PageModel
     private string FormatKey(string unformattedKey)
     {
         var result = new StringBuilder();
-        int currentPosition = 0;
+        var currentPosition = 0;
         while (currentPosition + 4 < unformattedKey.Length)
         {
             result.Append(unformattedKey.AsSpan(currentPosition, 4)).Append(' ');
@@ -179,7 +179,7 @@ public class EnableAuthenticatorModel : PageModel
         return string.Format(
             CultureInfo.InvariantCulture,
             AuthenticatorUriFormat,
-            _urlEncoder.Encode("Microsoft.AspNetCore.Identity.UI"),
+            _urlEncoder.Encode("Seguranca"),
             _urlEncoder.Encode(email),
             unformattedKey);
     }
