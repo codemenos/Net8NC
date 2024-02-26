@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using OpenIddict.EntityFrameworkCore.Models;
 using Solucao.Domain.Seguranca.Aggregates;
 using Solucao.Domain.Seguranca.Entities;
 using Solucao.Infrastructure.Data.Seguranca.Configurations;

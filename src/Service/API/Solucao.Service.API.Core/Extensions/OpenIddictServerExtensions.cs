@@ -25,36 +25,36 @@ public static class OpenIddictServerExtensions
             {
                 var request = context.Transaction.GetHttpRequest() ?? throw new InvalidOperationException();
 
-                if (!HttpMethods.IsPost(request.Method) || string.IsNullOrEmpty(request.ContentType) ||
-                    !request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
-                {
-                    context.Reject(Errors.InvalidRequest, "Requisição errada");
-                    return;
-                }
+                //if (!HttpMethods.IsPost(request.Method) || string.IsNullOrEmpty(request.ContentType) ||
+                //    !request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
+                //{
+                //    context.Reject(Errors.InvalidRequest, "Requisição errada");
+                //    return;
+                //}
 
                 // Habilite o buffering e refaça o corpo da solicitação após extrair o payload JSON para garantir que o
                 // endpoint da API de Identidade do ASP.NET Core também possa resolver os parâmetros da solicitação.
                 request.EnableBuffering();
 
-                try
-                {
-                    context.Request = await request.ReadFromJsonAsync<OpenIddictRequest>() ?? new();
-                }
+                //try
+                //{
+                //    context.Request = await request.ReadFromJsonAsync<OpenIddictRequest>() ?? new();
+                //}
 
-                finally
-                {
-                    request.Body.Position = 0L;
-                }
+                //finally
+                //{
+                //    request.Body.Position = 0L;
+                //}
 
                 // Ao contrário de uma implementação padrão do OAuth 2.0, o endpoint de login da API de Identidade do ASP.NET Core
                 // não especifica o parâmetro grant_type. Como é o único método de autenticação suportado de qualquer maneira,
                 // assume-se que todas as solicitações de token são solicitações de credenciais do proprietário do recurso (ROPC).
-                context.Request.GrantType = GrantTypes.Password;
+                //context.Request.GrantType = GrantTypes.Password;
 
                 // A versão mais recente do pacote de API de Identidade do ASP.NET Core usa "email" em vez do
                 // parâmetro de nome de usuário padrão do OAuth 2.0. Para contornar isso, o parâmetro de email é
                 // mapeado manualmente para o parâmetro de nome de usuário padrão do OAuth 2.0.
-                context.Request.Username = (string)context.Request["email"];
+                //context.Request.Username = (string)context.Request["email"];
             });
 
             builder.AddFilter<RequireHttpRequest>();

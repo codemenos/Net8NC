@@ -1,0 +1,40 @@
+﻿@page
+@model Solucao.Service.API.Seguranca.Pages.ConsentModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    const string GrantAccessValue = "Grant";
+    const string DenyAccessValue = "Deny";
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consentimento</title>
+    <link rel="stylesheet" href="~/css/Login.css" />
+</head>
+<body>
+
+    <form method="post">
+        <h1>Autorização</h1>
+        <div class="inset">
+            <p>Redirect URL: @Model.ReturnUrl</p>
+            <p>Por favor, confirme sua autorização para acessar este recurso.</p>
+            <ul>
+                <li></li>
+            </ul>
+            <div style="text-align: center;">
+                <input type="submit" name="grant" value="@GrantAccessValue"  />
+                <input type="submit" name="grant" value="@DenyAccessValue" />
+            </div>
+        </div>
+    </form>
+
+</body>
+</html>
+
+<script src="~/js/Login.js"></script>

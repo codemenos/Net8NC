@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -36,6 +35,21 @@ public partial class SwaggerConfiguration
     /// Habilita o TryItOut por padrão
     /// </summary>
     public bool EnableTryItOutByDefault { get; set; }
+
+    /// <summary>
+    /// ID do cliente OAuth
+    /// </summary>
+    public string OAuthClientId { get; set; }
+
+    /// <summary>
+    /// Nome do cliente OAuth
+    /// </summary>
+    public string OAuthAppName { get; set; }
+
+    /// <summary>
+    /// Secret do cliente OAuth
+    /// </summary>
+    public string OAuthClientSecret { get; set; }
 
     /// <summary>
     /// Caminho do arquivo JSON customizado
@@ -206,6 +220,38 @@ public partial class SwaggerConfiguration
             }
         }
 
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                AuthorizationCode = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri("https://localhost:7000/connect/authorize"),
+                    TokenUrl = new Uri("https://localhost:7000/connect/token"),
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "API-Seguranca", "Todos" }
+                    }
+                }
+            }
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "oauth2"
+                    }
+                },
+                new string[] { }
+            }
+        });
+
     }
 
     /// <summary>
@@ -227,6 +273,10 @@ public partial class SwaggerConfiguration
         const string LINK_CSS = "<link id='csstheme' href='{0}' rel='stylesheet' media='{1}' type='text/css' />";
 
         var swaggerConfiguration = app.Configuration.GetSection(SECTION_CONFIGURATION).Get<SwaggerConfiguration>();
+
+        options.OAuthClientId(swaggerConfiguration.OAuthClientId);
+        options.OAuthAppName(swaggerConfiguration.OAuthAppName);
+        options.OAuthClientSecret(swaggerConfiguration.OAuthClientSecret);
 
         foreach (var group in swaggerConfiguration?.Groups!)
         {

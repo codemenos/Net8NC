@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3FF97026-A31
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Service", "1 - Service", "{E8F2335F-CADC-4A2D-BF2F-80AD7729171C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solucao.Service.API.Seguranca", "src\Service\API\Solucao.Service.API.Seguranca\Solucao.Service.API.Seguranca.csproj", "{382B50F6-7DD7-4B4D-A660-822A7D1EF546}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solucao.Service.API.Cadastro", "src\Service\API\Solucao.Service.API.Cadastro\Solucao.Service.API.Cadastro.csproj", "{2DA86A02-02DA-450F-A2EE-55EED98F8610}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Application", "2 - Application", "{D103FB53-4658-484C-9775-8E1C99FC094D}"
@@ -50,7 +48,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solucao.Service.API.Core", "src\Service\API\Solucao.Service.API.Core\Solucao.Service.API.Core.csproj", "{E57BA016-0BAE-4AD7-9944-C969AD66706D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solucao.Service.API.Core", "src\Service\API\Solucao.Service.API.Core\Solucao.Service.API.Core.csproj", "{E57BA016-0BAE-4AD7-9944-C969AD66706D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solucao.Service.API.Seguranca", "src\Service\API\Solucao.Service.API.Seguranca\Solucao.Service.API.Seguranca.csproj", "{2E9747B7-F939-4E26-AFF7-F2209A2C3B97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,10 +58,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{382B50F6-7DD7-4B4D-A660-822A7D1EF546}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DA86A02-02DA-450F-A2EE-55EED98F8610}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -114,13 +110,16 @@ Global
 		{E57BA016-0BAE-4AD7-9944-C969AD66706D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E57BA016-0BAE-4AD7-9944-C969AD66706D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E57BA016-0BAE-4AD7-9944-C969AD66706D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E9747B7-F939-4E26-AFF7-F2209A2C3B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E9747B7-F939-4E26-AFF7-F2209A2C3B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E9747B7-F939-4E26-AFF7-F2209A2C3B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E9747B7-F939-4E26-AFF7-F2209A2C3B97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E8F2335F-CADC-4A2D-BF2F-80AD7729171C} = {3FF97026-A314-49BB-A871-CED4B3BD083A}
-		{382B50F6-7DD7-4B4D-A660-822A7D1EF546} = {E8F2335F-CADC-4A2D-BF2F-80AD7729171C}
 		{2DA86A02-02DA-450F-A2EE-55EED98F8610} = {E8F2335F-CADC-4A2D-BF2F-80AD7729171C}
 		{D103FB53-4658-484C-9775-8E1C99FC094D} = {3FF97026-A314-49BB-A871-CED4B3BD083A}
 		{EF286D90-8E42-45F8-B8CE-4B6B33168BE5} = {D103FB53-4658-484C-9775-8E1C99FC094D}
@@ -140,6 +139,7 @@ Global
 		{1EB36300-D6C9-4609-8C4D-22ED025B3A97} = {44446089-F3FA-4B8C-BC27-6C16A80EE751}
 		{ED5B50EA-D8C4-40B5-B931-F245FC64CEE5} = {7254B102-D416-4C83-AB69-B9D862A055F5}
 		{E57BA016-0BAE-4AD7-9944-C969AD66706D} = {E8F2335F-CADC-4A2D-BF2F-80AD7729171C}
+		{2E9747B7-F939-4E26-AFF7-F2209A2C3B97} = {E8F2335F-CADC-4A2D-BF2F-80AD7729171C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {614D8B37-B8C5-46F1-9883-9B7F8746AD73}
