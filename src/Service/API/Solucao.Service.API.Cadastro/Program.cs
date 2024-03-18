@@ -2,8 +2,8 @@ namespace Solucao.Service.API.Cadastro;
 
 using System.Globalization;
 using Solucao.Infrastructure.Shared.Common;
+using Solucao.Service.API.Cadastro.Core.Registers.BuilderServices;
 using Solucao.Service.API.Core.Registers;
-
 
 /// <summary>
 /// Classe principal do projeto.

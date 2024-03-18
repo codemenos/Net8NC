@@ -1,0 +1,117 @@
+﻿@page "/Manage/Security/Applications/Scopes/New"
+@using Newtonsoft.Json
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Scopes
+@using ManagerNav = Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Scopes.ManageNavPages;
+@model Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Scopes.NewModel
+@{
+    ViewData["Title"] = $"Scopes - Novo";
+    ViewData["ActivePage"] = ManagerNav.Escopos;
+    Layout = "_layout.cshtml";
+}
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <div class="btn-group btn-breadcrumb">
+        <a href="/" class="btn btn-default "><i class="fa fa-home"></i></a>
+        <a href="/Manage" class="btn btn-default ">Gerenciamento de Segurança</a>
+        <a href="/Manage/Security/Applications" class="btn btn-default">Aplicações</a>
+        <a href="/Manage/Security/Applications/Scopes" class="btn btn-default active">Scopes</a>
+        <a href="#" class="btn btn-default active">Novo</a>
+    </div>
+</nav>
+
+<div>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            <h3>@ViewData["Title"]</h3>
+
+            <hr class="border border-default border-3 opacity-75" />
+
+            <partial name="_StatusMessage" for="StatusMessage" />
+
+            <partial name="ScopeForm" for="Scope" />
+        </div>
+    </div>
+</div>
+
+<partial name="ScopeFormModals" for="Scope" />
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="/js/Security.Applications.Scopes.Editar.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            document.getElementById('confirmarCancelarTopBtn').addEventListener('click', function () {
+                window.location.href = '/Manage/Security/Applications/Scopes'; // Redirecionar para a página de listagem
+            });
+
+            document.getElementById('confirmarCancelarBaseBtn').addEventListener('click', function () {
+                window.location.href = '/Manage/Security/Applications/Scopes'; // Redirecionar para a página de listagem
+            });
+
+            const nomesExibicoesOpcoes = JSON.parse('@Html.Raw(Model.Scope.NomesExibicoesOpcoes.Any() ? JsonConvert.SerializeObject(Model.Scope.NomesExibicoesOpcoes.Select(kv => new { key = kv.Key.Name, value = kv.Value })) : "[]")');
+            const descricoesOpcoes = JSON.parse('@Html.Raw(Model.Scope.DescricoesOpcoes.Any() ? JsonConvert.SerializeObject(Model.Scope.DescricoesOpcoes.Select(kv => new { key = kv.Key.Name, value = kv.Value })) : "[]")');
+            const propriedadesOpcoes = @Html.Raw(Json.Serialize(Model.Scope.PropriedadesOpcoes.Any() ? Model.Scope.PropriedadesOpcoes : "[]"));
+            const recursosOpcoes = @Html.Raw(Json.Serialize(Model.Scope.RecursosOpcoes.Any() ? Model.Scope.RecursosOpcoes : "[]"));
+
+            const nomesExibicoes = @Html.Raw(Model.Scope.NomesExibicoes is not null && Model.Scope.NomesExibicoes?.Length > 1 ? Model.Scope.NomesExibicoes : "[]");
+            const descricoes = @Html.Raw(Model.Scope.NomesExibicoes is not null && Model.Scope.Descricoes?.Length > 1 ? Model.Scope.Descricoes : "[]");
+            const propriedades = @Html.Raw(Model.Scope.Propriedades is not null && Model.Scope.Propriedades?.Length > 1 ? Model.Scope.Propriedades : "[]");
+            const recursos = @Html.Raw(Model.Scope.Recursos is not null && Model.Scope.Recursos?.Length > 1 ? Model.Scope.Recursos : "[]");
+
+            const settingskeyValueCultureCollections = [
+                {
+                    container: 'scNomesExibicoes',
+                    dataHidden: 'Scope_NomesExibicoes',
+                    initData: nomesExibicoes,
+                    cultures: nomesExibicoesOpcoes,
+                    readOnly: false,
+                    truncateLimit: 50
+                },
+                {
+                    container: 'scDescricoes',
+                    dataHidden: 'Scope_Descricoes',
+                    initData: descricoes,
+                    cultures: descricoesOpcoes,
+                    readOnly: false,
+                    truncateLimit: 50
+                }
+            ];
+
+            const settingsKeyValueCollections = [
+                {
+                    container: 'scPropriedades',
+                    dataHidden: 'Scope_Propriedades',
+                    initData: propriedades,
+                    readOnly: false,
+                    truncateLimit: 10
+                }
+            ];
+
+            const settingsStringCollections = [
+                {
+                    container: 'scRecursos',
+                    dataHidden: 'Scope_Recursos',
+                    initData: recursos,
+                    readOnly: false,
+                    truncateLimit: 10,
+                    dataTips: recursosOpcoes
+                }
+            ];
+
+            const keyValueCultureCollections = new KeyValueCultureCollections(settingskeyValueCultureCollections);
+            const keyValueCollections = new KeyValueCollections(settingsKeyValueCollections);
+            const stringCollections = new StringCollections(settingsStringCollections);
+
+        });
+
+    </script>
+}

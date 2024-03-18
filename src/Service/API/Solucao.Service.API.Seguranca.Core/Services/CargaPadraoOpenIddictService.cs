@@ -1,4 +1,4 @@
-﻿namespace Solucao.Service.API.Core;
+﻿namespace Solucao.Service.API.Seguranca.Core.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;

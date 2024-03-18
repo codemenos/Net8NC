@@ -1,0 +1,26 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Manage/Pages/_Layout.cshtml";
+    }
+}
+@section Styles {
+    <link rel="stylesheet" href="/css/Select2.css" />
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    @RenderBody()
+}
+else
+{
+    @RenderBody()
+}
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

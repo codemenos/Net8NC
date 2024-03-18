@@ -1,0 +1,25 @@
+﻿@import url("/css/component.collections.css");
+@import url("/css/component.breadcrumb.css");
+
+/* Estilos para a legenda */
+legend {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Estilos para o formulário */
+fieldset {
+    padding: 20px; /* Adicionar espaçamento interno */
+    border: 1px solid #ced4da; /* Adicionar borda */
+    border-radius: 5px; /* Adicionar borda arredondada */
+    background-color: #e9ecef !important;
+}
+
+
+
+    /* Remover margens do container do formulário */
+    fieldset > div {
+        margin: 0;
+        padding: 0;
+    }

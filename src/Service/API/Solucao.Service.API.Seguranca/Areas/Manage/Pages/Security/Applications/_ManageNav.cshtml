@@ -1,0 +1,9 @@
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications; 
+@using Solucao.Domain.Seguranca.Aggregates
+@using ManagerNav = Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.ManageNavPages;
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @ManagerNav.PainelNavClass(ViewContext)" id="painel" asp-page="./Index">Painel</a></li>
+    <li class="nav-item"><a class="nav-link @ManagerNav.ClientesNavClass(ViewContext)" id="clientes" asp-page="./Clients/Index">Clientes</a></li>
+    <li class="nav-item"><a class="nav-link @ManagerNav.EscoposNavClass(ViewContext)" id="escopos" asp-page="./Scopes/Index">Escopos</a></li>
+</ul>

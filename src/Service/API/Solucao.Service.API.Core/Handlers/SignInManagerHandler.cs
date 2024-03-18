@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-public class SignInManagerHandler<TUser> : SignInManager<TUser> where TUser : class
+public class SignInManagerHandler<TUser> 
+    : SignInManager<TUser> 
+    where TUser : class
 {
     private readonly ILogger<SignInManagerHandler<TUser>> _logger;
 

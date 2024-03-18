@@ -1,17 +1,16 @@
 namespace Solucao.Service.API.Seguranca;
 
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Solucao.Domain.Seguranca.Aggregates;
 using Solucao.Infrastructure.Data.Seguranca.Contexts;
 using Solucao.Infrastructure.Shared.Common;
-using Solucao.Service.API.Core.Registers;
-using Solucao.Domain.Seguranca.Aggregates;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Solucao.Service.API.Core.Handlers;
+using Solucao.Service.API.Core.Registers;
 using Solucao.Service.API.Core.Services;
-using Solucao.Service.API.Core;
-using OpenIddict.Server;
+using Solucao.Service.API.Seguranca.Core.Services;
+using Solucao.Service.API.Seguranca.Core.Registers.BuilderServices;
 
 public partial class Program
 {
@@ -38,7 +37,7 @@ public partial class Program
         builder.Services.AddScoped<SignInManager<SecurityUser>, SignInManagerHandler<SecurityUser>>();
         builder.Services.AddTransient<IEmailSender<SecurityUser>, EmailSenderService>();
 
-        //builder.Services.AddIdentityApiEndpoints<SecurityUser>();
+        builder.Services.AddScoped<IAplicativoClienteService, AplicativoClienteService>();
 
         builder.Services.RegisterServices(typeof(Program), builder.Configuration);
 
@@ -47,14 +46,9 @@ public partial class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString(ConstantGlobal.StringConnectionSeguranca));
         });
 
-
-
         var app = builder.Build();
 
         app.MapGroup($"/{IDENTIDADE}").WithGroupName(IDENTIDADE).MapIdentityApi<SecurityUser>().WithGroupName(IDENTIDADE).AllowAnonymous();
-
-        //app.MapGet("/", () => "Olá Anonimo!").AllowAnonymous();
-        //app.MapGet("/requires-auth", (ClaimsPrincipal user) => $"Olá, {user.Identity?.Name}!").RequireAuthorization();
 
         app.RegisterWebApp();
 

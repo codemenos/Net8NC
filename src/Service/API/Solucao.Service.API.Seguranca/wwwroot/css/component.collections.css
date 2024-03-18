@@ -1,0 +1,171 @@
+﻿@import url("/css/component.collections.culturevalue.css");
+@import url("/css/component.collections.keyvalue.css");
+@import url("/css/component.collections.value.css");
+
+/* Estilos para o container dos itens de tradução */
+.key-value-list {
+    border: 0px solid #ddd;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+    .key-value-list .row {
+        margin: 0px;
+        padding: 0px;
+    }
+
+        .key-value-list .row .col {
+            margin: 0px;
+            padding: 0px;
+        }
+
+    .key-value-list .key-input {
+        font-size: 18px;
+    }
+
+/* Estilos para os itens individuais de tradução */
+.key-value-list-items {
+    max-height: 176px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-bottom: 0px solid #ddd;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+}
+
+    .key-value-list-items ::-webkit-scrollbar-track {
+        background-color: #fff; /* Cor do fundo do scrollbar */
+    }
+
+
+
+/* Estilos para as colunas de chave e valor */
+.key-value-list-items-column-key,
+.key-value-list-items-column-value {
+    flex: 1;
+    padding: 0px;
+    padding-top: 8px;
+    padding-left: 10px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Estilos para as linhas pares */
+.key-value-list-items-row.even {
+    background-color: #f8f9fa; /* Cor de fundo para linhas pares */
+}
+
+/* Estilos para as linhas ímpares */
+.key-value-list-items-row.odd {
+    background-color: #fff; /* Cor de fundo para linhas ímpares */
+}
+
+/* Estilos para os botões de remoção e adição */
+.remove-button,
+.add-button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.remove-button {
+    background-color: #dc3545;
+    color: #fff;
+    align-self: flex-end; /* Alinha os botões na parte inferior */
+}
+
+    .remove-button:hover {
+        background-color: #c82333;
+    }
+
+.add-button {
+    background-color: #007bff;
+    color: #fff;
+    margin-left: auto; /* Alinha o botão de adição à direita */
+}
+
+    .add-button:hover {
+        background-color: #0056b3;
+    }
+
+/* Estilos para o campo de tradução */
+.key-input {
+    font-size: 18px;
+}
+
+.value-input {
+    font-size: 18px;
+}
+
+/* Estilos para o ícone do botão de adição */
+.add-button i {
+    margin-right: 5px; /* Adicionar um espaço entre o ícone e o texto */
+}
+
+/* Estilos para o ícone do botão de remoção */
+.remove-button i {
+    margin-right: 5px; /* Adicionar um espaço entre o ícone e o texto */
+}
+
+
+.string-list {
+    border: 0px solid #ddd;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.string-list-items {
+    max-height: 176px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-bottom: 0px solid #ddd;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+}
+
+    .string-list-items ::-webkit-scrollbar-track {
+        background-color: #fff; /* Cor do fundo do scrollbar */
+    }
+
+
+    .string-list .string-list-form {
+        margin: 0px;
+    }
+
+        .string-list .string-list-form input {
+            margin: 0px;
+        }
+
+        .string-list .string-list-form .string-list-column-button {
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+
+            .string-list .string-list-form .string-list-column-button button {
+                margin: 0px;
+            }
+
+
+.string-list-items-column-value {
+    flex: 1;
+    padding: 0px;
+    padding-top: 8px;
+    padding-left: 10px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+
+/* Estilos para as linhas pares */
+.string-list-items-row.even {
+    background-color: #f8f9fa; /* Cor de fundo para linhas pares */
+}
+
+/* Estilos para as linhas ímpares */
+.string-list-items-row.odd {
+    background-color: #fff; /* Cor de fundo para linhas ímpares */
+}

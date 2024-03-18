@@ -1,0 +1,9 @@
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages; 
+@using Solucao.Domain.Seguranca.Aggregates
+@inject SignInManager<SecurityUser> SignInManager
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @ManageNavPages.PainelNavClass(ViewContext)" id="painel" asp-page="./Index">Painel</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.AplicacaoNavClass(ViewContext)" id="aplicacao" href="/Manage/Security/Applications">Aplicações</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.IdentidadeNavClass(ViewContext)" id="identidade" href="/Manage/Security/Identities">Identidades</a></li>
+</ul>

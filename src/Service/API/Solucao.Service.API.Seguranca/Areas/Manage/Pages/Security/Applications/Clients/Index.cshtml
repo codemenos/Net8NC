@@ -1,0 +1,165 @@
+﻿@page
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Clients
+@using ManagerNav = Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Clients.ManageNavPages;
+@model Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Clients.ClientsModel
+@{
+    ViewData["Title"] = "Clientes";
+    ViewData["ActivePage"] = ManagerNav.Clientes;
+    Layout = "_layout.cshtml";
+}
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <div class="btn-group btn-breadcrumb">
+        <a href="/" class="btn btn-default "><i class="fa fa-home"></i></a>
+        <a href="/Manage" class="btn btn-default ">Gerenciamento de Segurança</a>
+        <a href="/Manage/Security/Applications" class="btn btn-default">Aplicações</a>
+        <a href="/Manage/Security/Applications/Clients" class="btn btn-default active">Clientes</a>
+    </div>
+</nav>
+
+<div>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            <h3>@ViewData["Title"]</h3>
+            <partial name="_StatusMessage" for="StatusMessage" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3 d-flex justify-content-end">
+                        <button id="newBtn" class="btn btn-default btn-lg btnsave">
+                            <i class="fas fa-plus me-2"></i> Novo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border border-default border-3 opacity-75" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="clientsTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="width: 200px;">Identificação</th> 
+                                <th style="width: auto;">Nome</th> 
+                                <th style="width: 80px;"></th> 
+                                <th style="width: 80px;"></th> 
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<hr class="border border-default border-3 opacity-75" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+            document.getElementById('newBtn').addEventListener('click', function () {
+                window.location.href = '/Manage/Security/Applications/Clients/New'; // Redirecionar para a página de criação
+            });
+
+            var dataTable = $('#clientsTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "/api/clients", // URL da sua API
+                    "type": "GET",
+                    "data": function (d) {
+                        // Adicione os parâmetros necessários para a API
+                        d.draw = d.draw;
+                        d.start = d.start;
+                        d.length = d.length;
+                        d.search = d.search.value;
+                        d.orderColumn = d.order[0].column;
+                        d.orderDirection = d.order[0].dir;
+                    },
+                    "dataSrc": function (json) {
+                        return json.data; // Indica o caminho para os dados no objeto JSON retornado pela API
+                    }
+                },
+                "columns": [
+                    { "data": "clienteId", "width": "200px" },
+                    { "data": "nomeExibicao", "width": "auto" },
+                    { "data": null, "defaultContent": "<button class='btn btn-primary btn-edit'><i class='fas fa-edit me-2'></i></button>", "width": "60px" },
+                    { "data": null, "defaultContent": "<button class='btn btn-danger btn-delete'><i class='fas fa-trash-alt me-2'></i></button>", "width": "60px" }
+                ],
+                "columnDefs": [
+                    {
+                        "targets": -2, // Índice da coluna de editar
+                        "orderable": false, // Desabilita a ordenação nesta coluna
+                        "searchable": false // Desabilita a busca nesta coluna
+                    },
+                    {
+                        "targets": -1, // Índice da coluna de remover
+                        "orderable": false, // Desabilita a ordenação nesta coluna
+                        "searchable": false // Desabilita a busca nesta coluna
+                    }
+                ],
+                "language": {
+                    "sEmptyTable": "Nenhum registro encontrado",
+                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "_MENU_ resultados por página",
+                    "sLoadingRecords": "Carregando...",
+                    "sProcessing": "Processando...",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sSearch": "Pesquisar",
+                    "oPaginate": {
+                        "sNext": "Próximo",
+                        "sPrevious": "Anterior",
+                        "sFirst": "Primeiro",
+                        "sLast": "Último"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Ordenar colunas de forma ascendente",
+                        "sSortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    }
+                }
+            });
+
+            $('#clientsTable').on('click', '.btn-edit', function () {
+                var data = dataTable.row($(this).parents('tr')).data();
+                var clientId = data.clienteId;
+                window.location.href = '/Manage/Security/Applications/Clients/Edit/' + clientId;
+            });
+
+            $('#clientsTable').on('click', '.btn-delete', function () {
+                var data = dataTable.row($(this).parents('tr')).data();
+                var clientId = data.clienteId;
+                window.location.href = '/Manage/Security/Applications/Clients/Delete/' + clientId;
+            });
+
+        });
+
+
+    </script>
+}

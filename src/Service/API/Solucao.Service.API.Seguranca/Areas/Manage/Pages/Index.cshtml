@@ -1,0 +1,36 @@
+﻿@page
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages
+@model Solucao.Service.API.Seguranca.Areas.Manage.Pages.IndexModel
+@{
+    ViewData["Title"] = "Painel";
+    ViewData["ActivePage"] = ManageNavPages.Painel;
+}
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <div class="btn-group btn-breadcrumb">
+        <a href="#" class="btn btn-default "><i class="fa fa-home"></i></a>
+        <a href="#" class="btn btn-default active">Gerenciamento de Segurança</a>
+    </div>
+</nav>
+
+<div>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            <h3>@ViewData["Title"]</h3>
+            <partial name="_StatusMessage" for="StatusMessage" />
+            <div class="row">
+                <div class="col-md-12">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

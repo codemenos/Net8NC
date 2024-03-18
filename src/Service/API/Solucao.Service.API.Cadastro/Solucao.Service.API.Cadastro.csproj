@@ -14,7 +14,7 @@
     <ProjectReference Include="..\..\..\Application\Solucao.Application.Cadastro\Solucao.Application.Cadastro.csproj" />
     <ProjectReference Include="..\..\..\Application\Solucao.Application.Core\Solucao.Application.Core.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\Shared\Solucao.Infrastructure.Shared\Solucao.Infrastructure.Shared.csproj" />
-    <ProjectReference Include="..\Solucao.Service.API.Core\Solucao.Service.API.Core.csproj" />
+    <ProjectReference Include="..\Solucao.Service.API.Cadastro.Core\Solucao.Service.API.Cadastro.Core.csproj" />
   </ItemGroup>
 
 </Project>
