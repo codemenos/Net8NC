@@ -1,0 +1,315 @@
+﻿@model Solucao.Service.API.Seguranca.Core.ViewModels.ClientViewModel
+
+<form method="post">
+    <input asp-for="Id" type="hidden" value="@Model.Id" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                @if (!Model.Id.Equals(default))
+                {
+                    <!-- Botão Excluir na primeira coluna -->
+                    <button type="button" class="btn btn-danger btn-lg btnremove">
+                        <i class="fas fa-trash-alt me-2"></i> Excluir
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3 d-flex justify-content-end">
+                <!-- Botões na segunda coluna -->
+                <button id="confirmarCancelarTopBtn" type="button" class="btn btn-secondary btn-lg btncancel me-3">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-default btn-lg btnsave">
+                    <i class="fas fa-save me-2"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <hr class="border border-default border-3 opacity-75" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="clienteId" class="form-label">Identificador do Aplicativo Cliente</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalId" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group">
+                    <div class="input-group-text" data-bs-toggle="modal" data-bs-target="#explicacaoModalId" title="Clique para obter mais informações">
+                        <i class="fa fa-laptop-code"></i>
+                    </div>
+                    <input asp-for="ClienteId" type="text" class="form-control form-control-lg" placeholder="Identificador do Aplicativo Cliente" value="@Model.ClienteId">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="clienteNome" class="form-label">Nome do Aplicativo Cliente</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalNome" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group">
+                    <div class="input-group-text" data-bs-toggle="modal" data-bs-target="#explicacaoModalNome" title="Clique para obter mais informações">
+                        <i class="fa fa-server"></i>
+                    </div>
+                    <input asp-for="ClienteNome" type="text" class="form-control form-control-lg" placeholder="Nome do Aplicativo Cliente" value="@Model.ClienteNome">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <fieldset class="p-3">
+                <legend class="h5">Traduções do Nome do Cliente</legend>
+                <div class="mb-3">
+                    <input type="hidden" asp-for="DisplayNames" />
+                    <div id="scDisplayNames" class="zero"></div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="TipoCliente" class="form-label">Tipo de Cliente</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalTipoCliente" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group mb-3" for="TipoCliente">
+                    <label class="input-group-text mb-3" data-bs-toggle="modal" data-bs-target="#explicacaoModalTipoCliente" title="Clique para obter mais informações">
+                        <i class="fa fa-warehouse"></i>
+                    </label>
+                    <select asp-for="TipoCliente" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
+                        @if (Model.TipoCliente is null)
+                        {
+                            <option value="" selected>Selecione o Tipo de Cliente</option>
+                        }
+                        @foreach (var opcao in Model.ClientsTypes)
+                        {
+
+                            var ehSelecionado = Model.TipoCliente is not null && Model.TipoCliente.Equals(opcao.Key);
+                            if (ehSelecionado)
+                            {
+                                <option value="@opcao.Key" selected>@opcao.Value</option>
+                            }
+                            else
+                            {
+                                <option value="@opcao.Key">@opcao.Value</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="TipoConsentimento" class="form-label">Tipo de Consentimento</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalTipoConsentimento" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group mb-3" for="TipoConsentimento">
+                    <label class="input-group-text mb-3" data-bs-toggle="modal" data-bs-target="#explicacaoModalTipoConsentimento" title="Clique para obter mais informações">
+                        <i class="fa fa-vote-yea"></i>
+                    </label>
+                    <select asp-for="TipoConsentimento" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
+                        @if (Model.TipoConsentimento is null)
+                        {
+                            <option value="" selected>Selecione o Tipo de Consentimento</option>
+                        }
+                        @foreach (var consentType in Model.ConsentsTypes)
+                        {
+                            var ehSelecionado = Model.TipoConsentimento is not null && Model.TipoConsentimento.Equals(consentType.Key);
+                            if (ehSelecionado)
+                            {
+                                <option value="@consentType.Key" selected>@consentType.Value</option>
+                            }
+                            else
+                            {
+                                <option value="@consentType.Key">@consentType.Value</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="TipoAplicativoCliente" class="form-label">Tipo de Aplicativo Cliente</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalTipoAplicativoCliente" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group mb-3" for="TipoAplicativoCliente">
+                    <label class="input-group-text mb-3" data-bs-toggle="modal" data-bs-target="#explicacaoModalTipoAplicativoCliente" title="Clique para obter mais informações">
+                        <i class="fa fa-warehouse"></i>
+                    </label>
+                    <select asp-for="TipoAplicativoCliente" class="form-select form-select-lg mb-3" aria-label=".form-select-lg">
+                        @if (Model.TipoAplicativoCliente is null)
+                        {
+                            <option value="" selected>Selecione o Tipo de Aplicativo Cliente</option>
+                        }
+                        @foreach (var opcao in Model.ApplicationsTypes)
+                        {
+
+                            var ehSelecionado = Model.TipoAplicativoCliente is not null && Model.TipoAplicativoCliente.Equals(opcao.Key);
+                            if (ehSelecionado)
+                            {
+                                <option value="@opcao.Key" selected>@opcao.Value</option>
+                            }
+                            else
+                            {
+                                <option value="@opcao.Key">@opcao.Value</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label for="ClienteSecretKey" class="form-label">Chave Secreta do Cliente</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalClienteSecretKey" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group mb-3" for="ClienteSecretKey">
+                    <label class="input-group-text mb-3" data-bs-toggle="modal" data-bs-target="#explicacaoModalClienteSecretKey" title="Clique para obter mais informações">
+                        <i class="fa fa-key"></i>
+                    </label>
+                    <input asp-for="ClienteSecretKey" type="password" class="form-control form-control-lg mb-3" placeholder="Chave Secreta do Cliente" value="@Model.ClienteSecretKey">
+                    <button class="btn btn-outline-secondary mb-3" type="button" id="toggleClienteSecretKey">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label for="JsonWebKeySet" class="form-label">Chave Secreta do Cliente</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalJsonWebKeySet" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group mb-3" for="JsonWebKeySet">
+                    <label class="input-group-text mb-3" data-bs-toggle="modal" data-bs-target="#explicacaoModalJsonSecretKey" title="Clique para obter mais informações">
+                        <i class="fa fa-key"></i>
+                    </label>
+                    <input asp-for="JsonWebKeySet" type="password" class="form-control form-control-lg mb-3" placeholder="Chave Secreta Json" value="@Model.JsonWebKeySet">
+                    <button class="btn btn-outline-secondary mb-3" type="button" id="toggleJsonWebKeySet">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="rounded">
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalClienteSecretKey" title="Clique para obter mais informações">
+                    <i class="fa fa-route"></i>
+                </span>
+                <label for="UrlsRedirecionamento" class="form-label">Redirecinamentos de Entrada (Login)</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalClienteSecretKey" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <select asp-for="UrlsRedirecionamento" class="form-control select2 form-control-lg mb-3" multiple style="width: 100%;"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="rounded">
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalClienteSecretKey" title="Clique para obter mais informações">
+                    <i class="fa fa-route"></i>
+                </span>
+                <label for="UrlsRedirecionamentoAposLogout" class="form-label">Redirecinamentos de Entrada (Logoff)</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoModalClienteSecretKey" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <select asp-for="UrlsRedirecionamentoAposLogout" class="form-control select2 form-control-lg mb-3" multiple style="width: 100%;"></select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <fieldset class="p-3">
+                        <legend class="h5">Permissões</legend>
+                        <div class="mb-3">
+                            <input type="hidden" asp-for="Permissoes" />
+                            <div id="scPermissoes" class="zero"></div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <fieldset class="p-3">
+                        <legend class="h5">Propriedades</legend>
+                        <div class="mb-3">
+                            <input type="hidden" asp-for="Propriedades" />
+                            <div id="scPropriedades" class="zero"></div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <fieldset class="p-3">
+                        <legend class="h5">Requisitos</legend>
+                        <div class="mb-3">
+                            <input type="hidden" asp-for="Requisitos" />
+                            <div id="scRequisitos" class="zero"></div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr class="border border-default border-3 opacity-75" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <!-- Botão Excluir na primeira coluna -->
+                <button type="button" class="btn btn-danger btn-lg btnremove">
+                    <i class="fas fa-trash-alt me-2"></i> Excluir
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3 d-flex justify-content-end">
+                <!-- Botões na segunda coluna -->
+                <button id="confirmarCancelarBaseBtn" type="button" class="btn btn-secondary btn-lg btncancel me-3">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-success btn-lg btnsave">
+                    <i class="fas fa-save me-2"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+</form>

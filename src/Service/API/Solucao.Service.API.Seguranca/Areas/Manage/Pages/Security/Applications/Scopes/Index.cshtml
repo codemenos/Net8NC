@@ -1,0 +1,164 @@
+﻿@page
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Scopes
+@using ManagerNav = Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Scopes.ManageNavPages;
+@model Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Scopes.ScopeModel
+@{
+    ViewData["Title"] = "Escopos";
+    ViewData["ActivePage"] = ManagerNav.Escopos;
+    Layout = "_layout.cshtml";
+}
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <div class="btn-group btn-breadcrumb">
+        <a href="/" class="btn btn-default "><i class="fa fa-home"></i></a>
+        <a href="/Manage" class="btn btn-default ">Gerenciamento de Segurança</a>
+        <a href="/Manage/Security/Applications" class="btn btn-default">Aplicações</a>
+        <a href="/Manage/Security/Applications/Scopes" class="btn btn-default active">Escopos</a>
+    </div>
+</nav>
+
+<div>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            <h3>@ViewData["Title"]</h3>
+            <partial name="_StatusMessage" for="StatusMessage" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3 d-flex justify-content-end">
+                        <button id="newBtn" class="btn btn-default btn-lg btnsave">
+                            <i class="fas fa-plus me-2"></i> Novo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border border-default border-3 opacity-75" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="scopesTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="display: none;">Id</th>
+                                <th style="width: 200px;">Identificação</th> 
+                                <th style="width: auto;">Nome</th> 
+                                <th style="width: 80px;"></th> 
+                                <th style="width: 80px;"></th> 
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<hr class="border border-default border-3 opacity-75" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+            document.getElementById('newBtn').addEventListener('click', function () {
+                window.location.href = '/Manage/Security/Applications/Scopes/New'; // Redirecionar para a página de criação
+            });
+
+            var dataTable = $('#scopesTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "/api/scopes", // URL da sua API
+                    "type": "GET",
+                    "data": function (d) {
+                        // Adicione os parâmetros necessários para a API
+                        d.draw = d.draw;
+                        d.start = d.start;
+                        d.length = d.length;
+                        d.search = d.search.value;
+                        d.orderColumn = d.order[0].column;
+                        d.orderDirection = d.order[0].dir;
+                    },
+                    "dataSrc": function (json) {
+                        return json.data; // Indica o caminho para os dados no objeto JSON retornado pela API
+                    }
+                },
+                "columns": [
+                    { "data": "id", "visible": false }, // Oculta a coluna de ID
+                    { "data": "name", "width": "auto" }, // Exibe o nome
+                    { "data": "displayName", "width": "auto" }, // Exibe a descrição
+                    { "data": null, "defaultContent": "<button class='btn btn-primary btn-edit'><i class='fas fa-edit me-2'></i></button>", "width": "60px" },
+                    { "data": null, "defaultContent": "<button class='btn btn-danger btn-delete'><i class='fas fa-trash-alt me-2'></i></button>", "width": "60px" }
+                ],
+                "columnDefs": [
+                    {
+                        "targets": [2, 3], // Índices das colunas de nome e descrição
+                        "orderable": false, // Desabilita a ordenação nessas colunas
+                        "searchable": true // Habilita a busca nessas colunas
+                    },
+                    {
+                        "targets": [3, 4], // Índices das colunas de editar e remover
+                        "orderable": false, // Desabilita a ordenação nessas colunas
+                        "searchable": false // Desabilita a busca nessas colunas
+                    }
+                ],
+                "language": {
+                    "sEmptyTable": "Nenhum registro encontrado",
+                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "_MENU_ resultados por página",
+                    "sLoadingRecords": "Carregando...",
+                    "sProcessing": "Processando...",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sSearch": "Pesquisar",
+                    "oPaginate": {
+                        "sNext": "Próximo",
+                        "sPrevious": "Anterior",
+                        "sFirst": "Primeiro",
+                        "sLast": "Último"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Ordenar colunas de forma ascendente",
+                        "sSortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    }
+                }
+            });
+
+            $('#scopesTable').on('click', '.btn-edit', function () {
+                var data = dataTable.row($(this).parents('tr')).data();
+                window.location.href = '/Manage/Security/Applications/Scopes/Edit/' + data.name;
+            });
+
+            $('#scopesTable').on('click', '.btn-delete', function () {
+                var data = dataTable.row($(this).parents('tr')).data();
+                window.location.href = '/Manage/Security/Applications/Scopes/Delete/' + data.name;
+            });
+
+        });
+
+    </script>
+}

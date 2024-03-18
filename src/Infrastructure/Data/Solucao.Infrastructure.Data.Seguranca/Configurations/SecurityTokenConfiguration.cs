@@ -1,7 +1,7 @@
 ﻿namespace Solucao.Infrastructure.Data.Seguranca.Configurations;
 
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Solucao.Domain.Seguranca.Aggregates;
 
 public class SecurityTokenConfiguration : IEntityTypeConfiguration<SecurityToken>

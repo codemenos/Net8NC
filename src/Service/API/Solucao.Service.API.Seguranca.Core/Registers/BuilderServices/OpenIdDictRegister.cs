@@ -1,6 +1,5 @@
-﻿namespace Solucao.Service.API.Core;
+﻿namespace Solucao.Service.API.Seguranca.Core;
 
-using System.Runtime.Intrinsics.X86;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -11,8 +10,6 @@ using OpenIddict.Validation.AspNetCore;
 using Solucao.Domain.Seguranca.Aggregates;
 using Solucao.Domain.Seguranca.Entities;
 using Solucao.Infrastructure.Data.Seguranca.Contexts;
-using Solucao.Infrastructure.Shared.Common;
-using Solucao.Service.API.Core.Extensions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using SecurityToken = Domain.Seguranca.Aggregates.SecurityToken;
 

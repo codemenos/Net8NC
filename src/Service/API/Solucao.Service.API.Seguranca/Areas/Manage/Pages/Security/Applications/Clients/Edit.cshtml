@@ -1,0 +1,139 @@
+﻿@page "/Manage/Security/Applications/Clients/Edit/{ClientId}"
+@using Newtonsoft.Json
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Clients
+@using ManagerNav = Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Clients.ManageNavPages;
+@model Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Applications.Clients.EditModel
+@{
+    ViewData["Title"] = $"Clientes - Edição - {Model.Client.ClienteId}";
+    ViewData["ActivePage"] = ManagerNav.Clientes;
+    Layout = "_layout.cshtml";
+}
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <div class="btn-group btn-breadcrumb">
+        <a href="/" class="btn btn-default "><i class="fa fa-home"></i></a>
+        <a href="/Manage" class="btn btn-default ">Gerenciamento de Segurança</a>
+        <a href="/Manage/Security/Applications" class="btn btn-default">Aplicações</a>
+        <a href="/Manage/Security/Applications/Clients" class="btn btn-default active">Clientes</a>
+        <a href="#" class="btn btn-default active">Edição</a>
+    </div>
+</nav>
+
+<div>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            <h3>@ViewData["Title"]</h3>
+
+            <hr class="border border-default border-3 opacity-75" />
+
+            <partial name="_StatusMessage" for="StatusMessage" />
+
+            <partial name="ClientForm" for="Client" />
+        </div>
+    </div>
+</div>
+
+<partial name="ClientFormModals" for="Client" />
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="/js/Security.Applications.Clients.Editar.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Evento de clique para o botão "Cancelar"
+            document.getElementById('confirmarCancelarTopBtn').addEventListener('click', function () {
+                window.location.href = '/Manage/Security/Applications/Clients'; // Redirecionar para a página de listagem
+            });
+
+            document.getElementById('confirmarCancelarBaseBtn').addEventListener('click', function () {
+                window.location.href = '/Manage/Security/Applications/Clients'; // Redirecionar para a página de listagem
+            });
+
+            document.getElementById('toggleClienteSecretKey').addEventListener('click', function () {
+                var input = document.getElementById('Client_ClienteSecretKey');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                } else {
+                    input.type = 'password';
+                }
+            });
+
+            document.getElementById('toggleJsonWebKeySet').addEventListener('click', function () {
+                var input = document.getElementById('Client_JsonWebKeySet');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                } else {
+                    input.type = 'password';
+                }
+            });
+
+            initializeSelect2('Client_UrlsRedirecionamento', 'Informe os redirecionamentos', [], @Html.Raw(Json.Serialize(Model.Client.UrlsRedirecionamento)));
+            initializeSelect2('Client_UrlsRedirecionamentoAposLogout', 'Informe os redirecionamentos', [], @Html.Raw(Json.Serialize(Model.Client.UrlsRedirecionamentoAposLogout)));
+
+            const displayNamesOpcoes = JSON.parse('@Html.Raw(Model.Client.DisplayNamesOpcoes != null ? JsonConvert.SerializeObject(Model.Client.DisplayNamesOpcoes.Select(kv => new { key = kv.Key.Name, value = kv.Value })) : "[]")');
+            const propriedadesOpcoes = @Html.Raw(Json.Serialize(Model.Client.PropriedadesOpcoes.Any() ? Model.Client.PropriedadesOpcoes : "[]"));
+            const permissoesOpcoes = @Html.Raw(Json.Serialize(Model.Client.PermissoesOpcoes.Any() ? Model.Client.PermissoesOpcoes : "[]"));
+            const requisitosOpcoes = @Html.Raw(Json.Serialize(Model.Client.RequisitosOpcoes.Any() ? Model.Client.RequisitosOpcoes : "[]"));
+
+            const displayNames = @Html.Raw(Model.Client.DisplayNames is not null && Model.Client.DisplayNames?.Length > 1 ? Model.Client.DisplayNames : "[]");
+            const propriedades = @Html.Raw(Model.Client.Propriedades is not null && Model.Client.Propriedades?.Length > 1 ? Model.Client.Propriedades : "[]");
+            const permissoes = @Html.Raw(Model.Client.Permissoes is not null && Model.Client.Permissoes?.Length > 1 ? Model.Client.Permissoes : "[]");
+            const requisitos = @Html.Raw(Model.Client.Requisitos is not null && Model.Client.Requisitos?.Length > 1 ? Model.Client.Requisitos : "[]");
+
+            const settingskeyValueCultureCollections = [
+                {
+                    container: 'scDisplayNames',
+                    dataHidden: 'Client_DisplayNames',
+                    initData: displayNames,
+                    cultures: displayNamesOpcoes,
+                    readOnly: false,
+                    truncateLimit: 50
+                }
+            ];
+
+            const settingsKeyValueCollections = [
+                {
+                    container: 'scPropriedades',
+                    dataHidden: 'Client_Propriedades',
+                    initData: propriedades,
+                    readOnly: false,
+                    truncateLimit: 10
+                }
+            ];
+
+            const settingsStringCollections = [
+                {
+                    container: 'scPermissoes',
+                    dataHidden: 'Client_Permissoes',
+                    initData: permissoes,
+                    readOnly: false,
+                    truncateLimit: 10,
+                    dataTips: permissoesOpcoes
+                },
+                {
+                    container: 'scRequisitos',
+                    dataHidden: 'Client_Requisitos',
+                    initData: requisitos,
+                    readOnly: false,
+                    truncateLimit: 10,
+                    dataTips: requisitosOpcoes
+                }
+            ];
+
+            const keyValueCultureCollections = new KeyValueCultureCollections(settingskeyValueCultureCollections);
+            const keyValueCollections = new KeyValueCollections(settingsKeyValueCollections);
+            const stringCollections = new StringCollections(settingsStringCollections);
+
+        });
+
+    </script>
+}

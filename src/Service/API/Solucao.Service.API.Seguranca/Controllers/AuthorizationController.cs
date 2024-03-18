@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Server.AspNetCore;
 using Solucao.Service.API.Core.Attributes;
-using Solucao.Service.API.Core.Services;
+using Solucao.Service.API.Seguranca.Core.Services;
 
 [ApiExplorerSettings(GroupName = "Autorizacao")]
 public class AuthorizationController : Controller

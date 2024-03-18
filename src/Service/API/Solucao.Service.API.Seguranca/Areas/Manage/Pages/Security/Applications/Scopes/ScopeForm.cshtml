@@ -1,0 +1,148 @@
+﻿@model Solucao.Service.API.Seguranca.ViewModels.ScopeViewModel
+
+<form method="post">
+    <input asp-for="Id" type="hidden" value="@Model.Id" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                @if (!Model.Id.Equals(default))
+                {
+                    <!-- Botão Excluir na primeira coluna -->
+                    <button type="button" class="btn btn-danger btn-lg btnremove">
+                        <i class="fas fa-trash-alt me-2"></i> Excluir
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3 d-flex justify-content-end">
+                <!-- Botões na segunda coluna -->
+                <button id="confirmarCancelarTopBtn" type="button" class="btn btn-secondary btn-lg btncancel me-3">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-default btn-lg btnsave">
+                    <i class="fas fa-save me-2"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <hr class="border border-default border-3 opacity-75" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="Nome" class="form-label">Identificador do Escopo</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoNome" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group">
+                    <div class="input-group-text" data-bs-toggle="modal" data-bs-target="#explicacaoNome" title="Clique para obter mais informações">
+                        <i class="fa fa-laptop-code"></i>
+                    </div>
+                    <input asp-for="Nome" type="text" class="form-control form-control-lg" placeholder="Identificador do Escopo" value="@Model.Nome">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="NomeExibicao" class="form-label">Nome de Exibição (padrão)</label>
+                <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoNomeExibicao" title="Clique para obter mais informações">
+                    <i class="fa fa-question-circle"></i>
+                </span>
+                <div class="input-group">
+                    <div class="input-group-text" data-bs-toggle="modal" data-bs-target="#explicacaoNomeExibicao" title="Clique para obter mais informações">
+                        <i class="fa fa-laptop-code"></i>
+                    </div>
+                    <input asp-for="NomeExibicao" type="text" class="form-control form-control-lg" placeholder="Nome de Exibição" value="@Model.NomeExibicao">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <fieldset class="p-3">
+                <legend class="h5">Traduções do Nome de Exibições</legend>
+                <div class="mb-3">
+                    <input type="hidden" asp-for="NomesExibicoes" />
+                    <div id="scNomesExibicoes" class="zero"></div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-3">
+            <label for="Descricao" class="form-label">Descrição (padrão)</label>
+            <span class="help-icon" data-bs-toggle="modal" data-bs-target="#explicacaoDescricao" title="Clique para obter mais informações">
+                <i class="fa fa-question-circle"></i>
+            </span>
+            <div class="input-group">
+                <div class="input-group-text" data-bs-toggle="modal" data-bs-target="#explicacaoDescricao" title="Clique para obter mais informações">
+                    <i class="fa fa-laptop-code"></i>
+                </div>
+                <input asp-for="Descricao" type="text" class="form-control form-control-lg" placeholder="Descrição do Escopo" value="@Model.Descricao">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <fieldset class="p-3">
+                <legend class="h5">Traduções da descrição</legend>
+                <div class="mb-3">
+                    <input type="hidden" asp-for="Descricoes" />
+                    <div id="scDescricoes" class="zero"></div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <fieldset class="p-3">
+                <legend class="h5">Propriedades</legend>
+                <div class="mb-3">
+                    <input type="hidden" asp-for="Propriedades" />
+                    <div id="scPropriedades" class="zero"></div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <fieldset class="p-3">
+                <legend class="h5">Recursos</legend>
+                <div class="mb-3">
+                    <input type="hidden" asp-for="Recursos" />
+                    <div id="scRecursos" class="zero"></div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <hr class="border border-default border-3 opacity-75" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <!-- Botão Excluir na primeira coluna -->
+                <button type="button" class="btn btn-danger btn-lg btnremove">
+                    <i class="fas fa-trash-alt me-2"></i> Excluir
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3 d-flex justify-content-end">
+                <!-- Botões na segunda coluna -->
+                <button id="confirmarCancelarBaseBtn" type="button" class="btn btn-secondary btn-lg btncancel me-3">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-success btn-lg btnsave">
+                    <i class="fas fa-save me-2"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,10 +1,9 @@
 <Project>
-  
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup>
+    <PackageReference Include="AutoMapper" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Hangfire" />
@@ -35,13 +34,15 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
-
   <ItemGroup>
+    <PackageVersion Include="AutoMapper" Version="13.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageVersion Include="Hangfire" Version="1.8.9" />
     <PackageVersion Include="Hangfire.Core" Version="1.8.9" />
@@ -72,6 +73,6 @@
     <PackageVersion Include="OpenIddict" Version="5.2.0" />
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="5.2.0" />
     <PackageVersion Include="OpenIddict.AspNetCore" Version="5.2.0" />
+    <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
-
 </Project>

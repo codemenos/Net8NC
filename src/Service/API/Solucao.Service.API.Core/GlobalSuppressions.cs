@@ -5,5 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Performance", "CA1822:Marcar membros como estáticos", Justification = "<Pendente>", Scope = "member", Target = "~M:Solucao.Service.API.Core.Services.AuthorizationService.BuildRedirectUrl(Microsoft.AspNetCore.Http.HttpRequest,System.Collections.Generic.IDictionary{System.String,Microsoft.Extensions.Primitives.StringValues})~System.String")]
-[assembly: SuppressMessage("Performance", "CA1822:Marcar membros como estáticos", Justification = "<Pendente>", Scope = "member", Target = "~M:Solucao.Service.API.Core.Services.AuthorizationService.IsAuthenticated(Microsoft.AspNetCore.Authentication.AuthenticateResult,OpenIddict.Abstractions.OpenIddictRequest)~System.Boolean")]
+[assembly: SuppressMessage("Style", "IDE0060:Remover o parâmetro não utilizado", Justification = "<Pendente>", Scope = "member", Target = "~M:Solucao.Service.API.Core.Registers.BuilderServices.AutoMapperRegister.AddAutoMapper(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type[])~Microsoft.Extensions.DependencyInjection.IServiceCollection")]
+[assembly: SuppressMessage("Style", "IDE0290:Usar construtor primário", Justification = "<Pendente>", Scope = "member", Target = "~M:Solucao.Service.API.Core.Attributes.FormValueRequiredAttribute.#ctor(System.String)")]

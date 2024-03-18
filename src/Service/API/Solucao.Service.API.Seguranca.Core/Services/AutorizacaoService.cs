@@ -1,15 +1,14 @@
-﻿namespace Solucao.Service.API.Core.Services;
+﻿namespace Solucao.Service.API.Seguranca.Core.Services;
 
-using System.Net;
-using System.Net.Http;
+#nullable disable
+
 using System.Security.Claims;
 using System.Web;
-using k8s.KubeConfigModels;
+
 using MassTransit;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +28,9 @@ public class AutorizacaoService
     private readonly SignInManager<SecurityUser> _signInManager;
     private readonly UserManager<SecurityUser> _userManager;
 
+#pragma warning disable IDE0290 // Usar construtor primário
     public AutorizacaoService(
+#pragma warning restore IDE0290 // Usar construtor primário
             IOpenIddictApplicationManager applicationManager,
             IOpenIddictAuthorizationManager authorizationManager,
             IOpenIddictScopeManager scopeManager,
@@ -493,7 +494,7 @@ public class AutorizacaoService
         else
         {
             // Se o usuário não estiver autenticado, desafie a autenticação
-            var properties = new Dictionary<string, string?>
+            var properties = new Dictionary<string, string>
             {
                 [ChaveRedirectUri] = controllerBase.Url.Action(AcaoAutorizacao, ControladorAutorizacao)
             };

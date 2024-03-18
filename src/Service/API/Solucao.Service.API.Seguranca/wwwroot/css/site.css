@@ -1,22 +1,152 @@
+@import url("/css/site.base.css");
+@import url("/css/component.css");
+
+/* Reset padrão */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos de fonte */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+footer {
+    position: fixed; /* ou relative */
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa; /* Cor de fundo do footer */
+    padding: 10px 0; /* Espaçamento interno do footer */
+    font-size: 22px;
+    color: #6c757d; /* Cor do texto do footer */
+    border-top: 1px solid #dee2e6; /* Borda superior do footer */
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Estilos para o scroll */
+::-webkit-scrollbar {
+    width: 10px; /* Largura do scrollbar */
+}
+
+/* Estilos para a alça do scroll */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* Cor da alça do scrollbar */
+    border-radius: 5px; /* Arredondamento da alça do scrollbar */
+}
+
+/* Estilos para a trilha do scrollbar */
+::-webkit-scrollbar-track {
+    background-color: #fff; /* Cor do fundo do scrollbar */
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+/* Estilos para os botões */
+.btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    background-color: transparent;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-outline-secondary {
+    background-color: #6b6767;
+}
+.btnsave {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    background-color: #0db139;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btncancel {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btnremove {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    background-color: #dc3545;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-breadcrumb .btn {
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    color: #383737;
+}
+
+    .btn-breadcrumb .active {
+        background-color: transparent;
+        transition: background-color 0.3s ease;
+        color: #000 !important;
+        font-weight: 600;
+    }
+
+.btn-breadcrumb .btn:focus {
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    color: #000000;
+}
+
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #0056b3;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+
+.justify-content-md-center {
+    padding: 0px; 
+    margin: 0px;
+    border: 1px solid #ced4da; 
+    border-radius: 5px; 
+    background-color: transparent !important;
 }

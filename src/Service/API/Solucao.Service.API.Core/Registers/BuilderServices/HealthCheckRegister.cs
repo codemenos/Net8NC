@@ -17,7 +17,7 @@ public static class HealthCheckRegister
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddAddHealthChecksService(this IServiceCollection services, Type type, IConfiguration configuration)
+    public static IServiceCollection AddHealthChecksService(this IServiceCollection services, Type type, IConfiguration configuration)
     {
         const string AMQP = "{0}://{1}:{2}/{3}";
         const string SEGURANCA = "Seguranca";

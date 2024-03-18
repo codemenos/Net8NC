@@ -1,0 +1,40 @@
+﻿@page
+@using Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Identities
+@using ManagerNav = Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Identities.ManageNavPages;
+@model Solucao.Service.API.Seguranca.Areas.Manage.Pages.Security.Identities.RolesModel
+@{
+    ViewData["Title"] = "Grupos";
+    ViewData["ActivePage"] = ManagerNav.Grupos;
+    Layout = "_layout.cshtml";
+}
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <div class="btn-group btn-breadcrumb">
+        <a href="/" class="btn btn-default "><i class="fa fa-home"></i></a>
+        <a href="/Manage" class="btn btn-default ">Gerenciamento de Segurança</a>
+        <a href="/Manage/Security/Identities" class="btn btn-default">Identidades</a>
+        <a href="/Manage/Security/Identities/Roles" class="btn btn-default active">Grupos</a>
+    </div>
+</nav>
+
+<div>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">
+            <h3>@ViewData["Title"]</h3>
+            <partial name="_StatusMessage" for="StatusMessage" />
+            <div class="row">
+                <div class="col-md-12">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

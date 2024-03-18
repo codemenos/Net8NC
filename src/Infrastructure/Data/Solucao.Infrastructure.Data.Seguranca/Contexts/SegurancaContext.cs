@@ -8,14 +8,6 @@ using Solucao.Infrastructure.Data.Seguranca.Configurations;
 
 public class SegurancaContext : IdentityDbContext<SecurityUser, SecurityRole, Guid, SecurityUserClaim, SecurityUserRole, SecurityUserLogin, SecurityRoleClaim, SecurityUserToken>
 {
-    private const string IDENTITY_USER = "SecurityUser";
-    private const string IDENTITY_ROLE = "SecurityRole";
-    private const string IDENTITY_USER_CLAIM = "SecurityUserClaim";
-    private const string IDENTITY_USER_ROLE = "SecurityUserRole";
-    private const string IDENTITY_USER_LOGIN = "SecurityUserLogin";
-    private const string IDENTITY_ROLE_CLAIM = "SecurityRoleClaim";
-    private const string IDENTITY_USER_TOKEN = "SecurityUserToken";
-
     public SegurancaContext(DbContextOptions<SegurancaContext> options) : base(options)
     {
         //Rodar da pasta raiz da solução
@@ -42,14 +34,13 @@ public class SegurancaContext : IdentityDbContext<SecurityUser, SecurityRole, Gu
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<SecurityUser>(b => { b.ToTable(IDENTITY_USER); });
-        builder.Entity<SecurityRole>(b => { b.ToTable(IDENTITY_ROLE); });
-        builder.Entity<SecurityUserClaim>(b => { b.ToTable(IDENTITY_USER_CLAIM); });
-        builder.Entity<SecurityUserRole>(b => { b.ToTable(IDENTITY_USER_ROLE); });
-        builder.Entity<SecurityUserLogin>(b => { b.ToTable(IDENTITY_USER_LOGIN); b.HasKey(e => new { e.LoginProvider, e.ProviderKey }); });
-        builder.Entity<SecurityRoleClaim>(b => { b.ToTable(IDENTITY_ROLE_CLAIM); });
-        builder.Entity<SecurityUserToken>(b => { b.ToTable(IDENTITY_USER_TOKEN); });
-
+        builder.ApplyConfiguration(new SecurityUserConfiguration());
+        builder.ApplyConfiguration(new SecurityRoleConfiguration());
+        builder.ApplyConfiguration(new SecurityUserClaimConfiguration());
+        builder.ApplyConfiguration(new SecurityUserRoleConfiguration());
+        builder.ApplyConfiguration(new SecurityUserLoginConfiguration());
+        builder.ApplyConfiguration(new SecurityRoleClaimConfiguration());
+        builder.ApplyConfiguration(new SecurityUserTokenConfiguration());
         builder.ApplyConfiguration(new SecurityApplicationConfiguration());
         builder.ApplyConfiguration(new SecurityAuthorizationConfiguration());
         builder.ApplyConfiguration(new SecurityScopeConfiguration());
