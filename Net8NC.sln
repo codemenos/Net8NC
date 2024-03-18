@@ -64,6 +64,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{9CE20DCA-FFC1-401E-B006-95A5792C294E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solucao.Service.API.Core", "src\Service\API\Solucao.Service.API.Core\Solucao.Service.API.Core.csproj", "{E57BA016-0BAE-4AD7-9944-C969AD66706D}"
